@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <svg class="svg-defs" aria-hidden="true" focusable="false">
   <defs>
     <symbol id="p-plain" viewBox="0 0 100 100"><rect width="100" height="100" fill="var(--bg)"/><path d="M10 100C10 74 28 64 50 64s40 10 40 36z" fill="var(--body)"/><circle cx="50" cy="44" r="17" fill="var(--head)"/></symbol>
@@ -33,18 +34,18 @@
     <div class="in">
       <h1 id="h-hero"><span class="l1">Gather</span><span class="l2">virtually.</span></h1>
       <div class="hero-foot">
-        <div class="board" aria-hidden="true">
-          <svg class="tile t1" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-hat"/></svg>
-          <svg class="tile t2" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-headset"/></svg>
-          <svg class="tile t5" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-glasses"/></svg>
-          <svg class="tile t4" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-pair"/></svg>
-        </div>
         <div class="hero-copy">
           <p class="lead">Easy, welcoming virtual activities for teams, friends and families.</p>
           <div class="actions">
             <a class="btn" href="#contact">Call or email us</a>
             <a class="link" href="#experiences">See what we do</a>
           </div>
+        </div>
+        <div class="board" aria-hidden="true">
+          <svg class="tile t1" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-hat"/></svg>
+          <svg class="tile t2" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-headset"/></svg>
+          <svg class="tile t5" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-glasses"/></svg>
+          <svg class="tile t4" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-pair"/></svg>
         </div>
       </div>
     </div>
@@ -104,13 +105,10 @@
       <div class="reach rv rv-delay-14">
         <div class="row">
           <a class="big" id="ph" href="tel:+16478215799">647 821 5799</a>
-          <button class="btn on-accent" type="button" data-copy="647 821 5799" data-target="ph">Copy number</button>
         </div>
         <div class="row">
           <a class="big" id="em" href="mailto:hello@gatherlyexperiences.com">hello@gatherlyexperiences.com</a>
-          <button class="btn on-accent" type="button" data-copy="hello@gatherlyexperiences.com" data-target="em">Copy email</button>
         </div>
-        <p class="status" id="copy-status" role="status"></p>
       </div>
     </div>
   </section>
@@ -118,12 +116,7 @@
 
 <footer class="chapter foot f-night" data-ink="light">
   <div class="in">
-    <svg class="name" viewBox="0 0 1000 200" role="img" aria-label="Gatherly"><text x="0" y="178" textLength="1000" lengthAdjust="spacingAndGlyphs">GATHERLY</text></svg>
     <div class="foot-cols">
-      <div class="places">
-        <a href="tel:+16478215799">647 821 5799</a>
-        <a href="mailto:hello@gatherlyexperiences.com">hello@gatherlyexperiences.com</a>
-      </div>
       <nav aria-label="Footer">
         <a href="#experiences">What we do</a>
         <a href="#how">How it works</a>
@@ -163,18 +156,6 @@ document.documentElement.classList.add('js');
     var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
     rv.forEach(function (n) { io.observe(n); });
   } else { rv.forEach(function (n) { n.classList.add('in-view'); }); }
-
-  /* copying, with a selectable fallback */
-  function copy(text, ok, fail) {
-    try { navigator.clipboard.writeText(text).then(ok, fail); } catch (e) { fail(); }
-  }
-  $$('[data-copy]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      var st = $('#copy-status'), target = document.getElementById(b.getAttribute('data-target'));
-      copy(b.getAttribute('data-copy'), function () { st.textContent = 'Copied.'; },
-        function () { var r = document.createRange(); r.selectNodeContents(target); var s = getSelection(); s.removeAllRanges(); s.addRange(r); st.textContent = 'Selected. Copy it from here.'; });
-    });
-  });
 
   /* the drifting strip of call tiles */
   var reel = $('#reel');

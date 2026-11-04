@@ -1,13 +1,14 @@
-/* Trivia Night — matches the Gatherly brand palette from style.css */
+/* Trivia Night — matches the Gatherly theme from style.css */
 :root {
-  --cream: #ebe9e1;
-  --paper: #fff6ea;
-  --gold: #efb11d;
-  --pink: #ffa2b6;
-  --red: #e43d12;
-  --hover: #b02a0a;
-  --night: #1b0b07;
-  --muted: #6a4a3f;
+  --ink: #272421;
+  --ivory: #f7f0e7;
+  --red: #f04f47;
+  --red-dark: #c9332c;
+  --coral: #f47d60;
+  --peach: #f5b5a0;
+  --blush: #f6d9cd;
+  --line: #e6ded7;
+  --muted: #756b65;
   --ok: #2e7d32;
 }
 
@@ -16,39 +17,44 @@
 html, body { margin: 0; padding: 0; }
 
 body {
-  background: var(--cream);
-  color: var(--night);
-  font-family: "Red Hat Text", system-ui, sans-serif;
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: "DM Sans", system-ui, sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 h1, h2, .timer-num, .board .score, .my-score {
-  font-family: "Red Hat Display", system-ui, sans-serif;
-  font-weight: 900;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 /* ---------- header ---------- */
 .top {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 16px;
-  padding: 18px 24px;
+  padding: 0 clamp(22px, 4vw, 64px);
+  height: 82px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
 }
 .mark {
-  font-family: "Red Hat Display", system-ui, sans-serif;
-  font-weight: 900;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 800;
   font-size: 1.4rem;
+  letter-spacing: -0.05em;
   color: var(--red);
   text-decoration: none;
 }
 .game-name { color: var(--muted); font-weight: 500; }
 .my-score {
   margin-left: auto;
-  background: var(--night);
-  color: var(--paper);
-  padding: 6px 14px;
+  background: var(--ink);
+  color: #fff;
+  padding: 8px 16px;
   border-radius: 999px;
   font-size: 1rem;
 }
@@ -67,14 +73,13 @@ main {
 .screen[hidden] { display: none; }
 
 .card {
-  background: var(--paper);
-  border: 2px solid var(--night);
-  border-radius: 20px;
+  background: #fff;
+  border: 1px solid var(--ink);
+  border-radius: 28px;
   padding: 40px;
   width: 100%;
   max-width: 560px;
   text-align: center;
-  box-shadow: 6px 6px 0 var(--night);
 }
 .card.wide { max-width: 900px; }
 
@@ -83,26 +88,26 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 20px; }
 .lead { font-size: 1.2rem; color: var(--muted); }
 .fine { font-size: 0.9rem; color: var(--muted); }
 .error { color: var(--red); font-weight: 700; min-height: 1.4em; }
-.kicker { text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 700; margin: 0 0 8px; }
+.kicker { text-transform: uppercase; letter-spacing: 0.18em; color: var(--red); font-weight: 700; font-size: 0.7rem; margin: 0 0 8px; }
 
 /* ---------- buttons & form ---------- */
 .btn {
   display: inline-block;
-  background: var(--red);
+  background: var(--ink);
   color: #fff;
-  border: 2px solid var(--night);
+  border: none;
   border-radius: 999px;
   padding: 14px 32px;
   font: inherit;
   font-weight: 700;
   font-size: 1.1rem;
   cursor: pointer;
-  box-shadow: 3px 3px 0 var(--night);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+  transition: background 0.15s ease, transform 0.08s ease;
 }
-.btn:hover { background: var(--hover); }
-.btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--night); }
-.btn.danger { background: var(--night); }
+.btn:hover { background: var(--red); }
+.btn:active { transform: translateY(1px); }
+.btn.danger { background: var(--red); }
+.btn.danger:hover { background: var(--red-dark); }
 .btn:disabled { opacity: 0.5; cursor: wait; }
 
 .field-label { display: block; text-align: left; font-weight: 700; margin: 20px 0 6px; }
@@ -111,25 +116,24 @@ input[type="text"], #team-name, .q-options input {
   font: inherit;
   font-size: 1.2rem;
   padding: 14px 18px;
-  border: 2px solid var(--night);
-  border-radius: 12px;
+  border: 1px solid var(--ink);
+  border-radius: 14px;
   background: #fff;
-  color: var(--night);
+  color: var(--ink);
 }
-input:focus { outline: 3px solid var(--gold); outline-offset: 1px; }
+input:focus { outline: 3px solid var(--peach); outline-offset: 1px; }
 #join-form .btn { width: 100%; margin-top: 16px; }
 
 /* ---------- lobby ---------- */
 .count { font-weight: 700; color: var(--muted); }
 .team-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 16px 0; }
 .chip {
-  background: var(--pink);
-  border: 2px solid var(--night);
+  background: var(--blush);
   border-radius: 999px;
   padding: 8px 18px;
   font-weight: 700;
 }
-.chip.you { background: var(--gold); }
+.chip.you { background: var(--red); color: #fff; }
 
 /* ---------- question ---------- */
 .q-head {
@@ -144,7 +148,7 @@ input:focus { outline: 3px solid var(--gold); outline-offset: 1px; }
 .timer { position: relative; width: 110px; height: 110px; }
 .timer svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .timer circle { fill: none; stroke-width: 10; }
-.timer-bg { stroke: #d8d4c8; }
+.timer-bg { stroke: var(--line); }
 .timer-fg {
   stroke: var(--red);
   stroke-linecap: round;
@@ -179,33 +183,31 @@ input:focus { outline: 3px solid var(--gold); outline-offset: 1px; }
 }
 .q-options.text-answer { grid-template-columns: 1fr; }
 .opt {
-  background: var(--paper);
-  border: 2px solid var(--night);
-  border-radius: 16px;
+  background: #fff;
+  border: 1px solid var(--ink);
+  border-radius: 20px;
   padding: 22px;
   font: inherit;
   font-weight: 700;
   font-size: 1.25rem;
   text-align: left;
   cursor: pointer;
-  box-shadow: 3px 3px 0 var(--night);
   transition: transform 0.08s ease, background 0.15s ease;
 }
-.opt:hover { background: var(--gold); }
-.opt:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--night); }
-.opt.picked { background: var(--night); color: var(--paper); }
+.opt:hover { background: var(--blush); }
+.opt:active { transform: translateY(1px); }
+.opt.picked { background: var(--ink); color: #fff; }
 .opt .letter {
   display: inline-block;
-  background: var(--pink);
-  border: 2px solid var(--night);
-  border-radius: 8px;
+  background: var(--blush);
+  border-radius: 10px;
   width: 34px;
   height: 34px;
-  line-height: 30px;
+  line-height: 34px;
   text-align: center;
   margin-right: 12px;
 }
-.opt.picked .letter { background: var(--gold); color: var(--night); }
+.opt.picked .letter { background: var(--coral); color: var(--ink); }
 
 .q-options form { display: flex; gap: 12px; width: 100%; }
 .q-options form input { flex: 1; }
@@ -226,43 +228,43 @@ body.time-up .needs-time { pointer-events: none; opacity: 0.55; }
   display: flex;
   align-items: center;
   gap: 16px;
-  background: var(--paper);
-  border: 2px solid var(--night);
-  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--ink);
+  border-radius: 16px;
   padding: 14px 20px;
   margin-bottom: 10px;
   font-size: 1.2rem;
   font-weight: 700;
 }
 .board li .rank {
-  font-family: "Red Hat Display", system-ui, sans-serif;
-  font-weight: 900;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 800;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid var(--night);
+  border: 1px solid var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--cream);
+  background: var(--ivory);
   flex: none;
 }
-.board li:nth-child(1) .rank { background: var(--gold); }
-.board li:nth-child(2) .rank { background: var(--pink); }
-.board li:nth-child(3) .rank { background: var(--red); color: #fff; }
+.board li:nth-child(1) .rank { background: var(--red); color: #fff; border-color: var(--red); }
+.board li:nth-child(2) .rank { background: var(--coral); border-color: var(--coral); }
+.board li:nth-child(3) .rank { background: var(--peach); border-color: var(--peach); }
 .board li .name { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; }
 .board li .score { font-size: 1.3rem; }
-.board li.you { outline: 4px solid var(--gold); }
-.winner { font-size: 1.6rem; font-weight: 900; font-family: "Red Hat Display", system-ui, sans-serif; }
+.board li.you { outline: 3px solid var(--red); }
+.winner { font-size: 1.6rem; font-weight: 800; font-family: "Manrope", system-ui, sans-serif; }
 
 /* ---------- host panel ---------- */
 .host-only { display: none; }
 body.host .host-only { display: block; width: 100%; }
 .host-panel {
   margin-top: 28px;
-  background: var(--night);
-  color: var(--cream);
-  border-radius: 16px;
+  background: var(--ink);
+  color: var(--ivory);
+  border-radius: 20px;
   padding: 18px 22px;
   display: flex;
   align-items: center;
@@ -276,27 +278,31 @@ body.host .host-only { display: block; width: 100%; }
   letter-spacing: 0.12em;
   font-size: 0.8rem;
   font-weight: 700;
-  background: var(--gold);
-  color: var(--night);
+  background: var(--coral);
+  color: var(--ink);
   border-radius: 6px;
   padding: 4px 10px;
 }
 .host-panel .answered { font-weight: 700; }
+.host-panel .btn { background: #fff; color: var(--ink); }
+.host-panel .btn:hover { background: var(--peach); }
+.host-panel .btn.danger { background: var(--red); color: #fff; }
+.host-panel .btn.danger:hover { background: var(--red-dark); }
 
 .host-answers { width: 100%; display: flex; flex-direction: column; gap: 8px; margin: 8px 0 16px; }
 .ha-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #2c1710;
+  background: #3a3531;
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 0.95rem;
   flex-wrap: wrap;
 }
 .ha-name { font-weight: 700; min-width: 110px; }
-.ha-ans { flex: 1; color: #d8c9c0; overflow-wrap: anywhere; }
-.ha-pts { font-weight: 700; color: var(--gold); }
+.ha-ans { flex: 1; color: #d8cec7; overflow-wrap: anywhere; }
+.ha-pts { font-weight: 700; color: var(--peach); }
 .ha-toggle {
   font: inherit;
   font-weight: 700;
@@ -307,7 +313,7 @@ body.host .host-only { display: block; width: 100%; }
   cursor: pointer;
 }
 .ha-toggle.ok { background: var(--ok); color: #fff; }
-.ha-toggle.no { background: transparent; color: #e0a49a; border-color: #e0a49a; }
+.ha-toggle.no { background: transparent; color: var(--peach); border-color: var(--peach); }
 
 /* ---------- small screens ---------- */
 @media (max-width: 640px) {

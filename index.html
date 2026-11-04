@@ -1,174 +1,227 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gatherly Experiences</title>
-  <meta name="claude:viewport-fit-sides" content="cover">
+  <meta name="description" content="Discover easy-to-run games and expertly hosted experiences that help teams connect, compete, and build stronger workplace relationships wherever they work.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Red+Hat+Text:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<svg class="svg-defs" aria-hidden="true" focusable="false">
-  <defs>
-    <symbol id="p-plain" viewBox="0 0 100 100"><rect width="100" height="100" fill="var(--bg)"/><path d="M10 100C10 74 28 64 50 64s40 10 40 36z" fill="var(--body)"/><circle cx="50" cy="44" r="17" fill="var(--head)"/></symbol>
-    <symbol id="p-hat" viewBox="0 0 100 100"><rect width="100" height="100" fill="var(--bg)"/><path d="M10 100C10 76 28 68 50 68s40 8 40 32z" fill="var(--body)"/><circle cx="50" cy="48" r="17" fill="var(--head)"/><path d="M50 8 65 32H35z" fill="var(--acc)"/><circle cx="50" cy="8" r="4" fill="var(--acc)"/></symbol>
-    <symbol id="p-glasses" viewBox="0 0 100 100"><rect width="100" height="100" fill="var(--bg)"/><path d="M10 100C10 74 28 64 50 64s40 10 40 36z" fill="var(--body)"/><circle cx="50" cy="44" r="17" fill="var(--head)"/><circle cx="43" cy="43" r="5.5" fill="var(--acc)"/><circle cx="57" cy="43" r="5.5" fill="var(--acc)"/><rect x="46" y="41.5" width="8" height="3" fill="var(--acc)"/></symbol>
-    <symbol id="p-headset" viewBox="0 0 100 100"><rect width="100" height="100" fill="var(--bg)"/><path d="M10 100C10 74 28 64 50 64s40 10 40 36z" fill="var(--body)"/><circle cx="50" cy="44" r="17" fill="var(--head)"/><path d="M29 44a21 21 0 0 1 42 0" fill="none" stroke="var(--acc)" stroke-width="5"/><rect x="25" y="40" width="9" height="15" fill="var(--acc)"/><rect x="66" y="40" width="9" height="15" fill="var(--acc)"/></symbol>
-    <symbol id="p-pair" viewBox="0 0 100 100"><rect width="100" height="100" fill="var(--bg)"/><path d="M18 100C18 80 28 72 38 72s20 8 20 28z" fill="var(--body)"/><circle cx="38" cy="56" r="11" fill="var(--head)"/><path d="M42 100C42 78 52 70 62 70s20 8 20 30z" fill="var(--acc)"/><circle cx="62" cy="54" r="11" fill="var(--head)"/></symbol>
-  </defs>
-</svg>
+<a class="skip" href="#home">Skip to content</a>
 
-<a class="skip" href="#contact">Skip to contact details</a>
-
-<header class="hdr" id="hdr" data-ink="dark">
-  <a class="mark" href="#top" aria-label="Gatherly, back to top">Gatherly</a>
-  <a class="nav" href="#contact">Call or email us</a>
+<header class="site-header">
+  <a class="wordmark" href="#/home">gatherly.</a>
+  <div class="swatches" aria-label="Gatherly colors"><i></i><i></i><i></i><i></i></div>
+  <nav id="site-nav" aria-label="Main navigation">
+    <a href="#/about">About us</a>
+    <a href="#services">Experiences</a>
+    <a href="#games">Categories</a>
+    <a href="#/contact">Contact</a>
+  </nav>
+  <a class="header-cta" href="#/contact">Plan a gathering <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5"/></svg></a>
+  <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span></button>
 </header>
 
-<main id="top">
-  <section class="chapter hero f-cream" data-ink="dark" aria-labelledby="h-hero">
-    <div class="in">
-      <h1 id="h-hero"><span class="l1">Gather</span><span class="l2">virtually.</span></h1>
-      <div class="hero-foot">
-        <div class="hero-copy">
-          <p class="lead">Easy, welcoming virtual activities for teams, friends and families.</p>
-          <div class="actions">
-            <a class="btn" href="#contact">Call or email us</a>
-            <a class="link" href="#experiences">See what we do</a>
-          </div>
-        </div>
-        <div class="board" aria-hidden="true">
-          <svg class="tile t1" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-hat"/></svg>
-          <svg class="tile t2" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-headset"/></svg>
-          <svg class="tile t5" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-glasses"/></svg>
-          <svg class="tile t4" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><use href="#p-pair"/></svg>
-        </div>
+<main>
+  <!-- Home -->
+  <div class="page" id="page-home">
+    <section class="hero" id="home">
+      <div class="hero-inner">
+        <p>WELCOME TO GATHERLY</p>
+        <h1>Bring people together.<br>Make moments memorable.</h1>
+        <p class="hero-description">Discover and book interactive virtual experiences designed to bring people together, strengthen connections, and make every gathering memorable.</p>
       </div>
-    </div>
-  </section>
+      <div class="hero-orbit one" aria-hidden="true"></div>
+      <div class="hero-orbit two" aria-hidden="true"></div>
+    </section>
 
-  
-
-  <section class="chapter f-pink" id="experiences" data-ink="dark" aria-labelledby="h-exp">
-    <div class="in">
-      <h2 class="sec-title" id="h-exp">Choose your kind of together</h2>
-      <ul class="poster">
-        <li><a href="#contact"><span class="w">Play</span><span class="d">Trivia, escape rooms, mysteries and team competitions</span></a></li>
-        <li><a href="#contact"><span class="w">Celebrate</span><span class="d">Holidays, birthdays, anniversaries and special moments</span></a></li>
-        <li><a href="#contact"><span class="w">Connect</span><span class="d">Relaxed activities that help people feel closer</span></a></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="chapter f-gold" id="how" data-ink="dark" aria-labelledby="h-how">
-    <div class="in">
-      <h2 class="h2 rv" id="h-how">Pick, invite, play.</h2>
-      <div class="promises">
-        <div class="rv rv-delay-05">
-          <h3>Pick</h3>
-          <p>Choose a ready-made game and a length, from a quick 15 minutes to a full hour.</p>
-        </div>
-        <div class="rv rv-delay-15">
-          <h3>Invite</h3>
-          <p>Share one link. Teams and scoring set themselves up, so you can play too.</p>
-        </div>
-        <div class="rv rv-delay-25">
-          <h3>Play</h3>
-          <p>Rounds, wildcards and a finale with funny awards give everyone a reason to join in.</p>
-        </div>
+    <section class="service-overview" id="services">
+      <div class="service-intro">
+        <p class="section-label">HOW WOULD YOU LIKE TO GATHER?</p>
+        <h2>Choose your<br>kind of together.</h2>
       </div>
-    </div>
-  </section>
-
-  
-
-  <section class="chapter f-cream" id="about" data-ink="dark" aria-labelledby="h-about">
-    <div class="in">
-      <div class="about-grid">
-        <h2 class="h2 rv" id="h-about">Real connection. No travel required.</h2>
-        <p class="lead rv rv-delay-08">We create easy, welcoming virtual activities for teams, coworkers, families and friends. Celebrate a holiday, mark a milestone, or turn an ordinary evening into something everyone will remember.</p>
+      <div class="service-options two">
+        <a href="#/self-hosted" class="service-option play">
+          <span>01 — FLEXIBLE &amp; EASY</span>
+          <img class="service-photo" src="assets/gatherly/self-hosted.jpg" alt="A group joining a virtual experience together">
+          <h3>Virtual self-hosted experiences</h3>
+          <p>Everything you need to run the fun yourself, whenever it works for your group.</p>
+          <i><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5"/></svg></i>
+        </a>
+        <a href="#/hosted" class="service-option celebrate">
+          <span>02 — WE HANDLE THE FUN</span>
+          <img class="service-photo" src="assets/gatherly/hosted.jpg" alt="A host leading a lively virtual group experience">
+          <h3>Virtual hosted experiences</h3>
+          <p>A friendly expert host leads your group so everyone can relax, join in, and connect.</p>
+          <i><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5"/></svg></i>
+        </a>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="chapter contact f-accent" id="contact" data-ink="dark" aria-labelledby="h-contact">
-    <div class="in in-reel">
-      <div class="reel" aria-hidden="true"><div class="reel-track" id="reel"></div></div>
-    </div>
-    <div class="in in-contact">
-      <h2 class="h2 rv" id="h-contact">Let's plan something fun.</h2>
-      <p class="lead rv rv-delay-08">Call or email us with your group, the occasion and the date, and we'll suggest an experience.</p>
-      <div class="reach rv rv-delay-14">
-        <div class="row">
-          <a class="big" id="ph" href="tel:+16478215799">647 821 5799</a>
-        </div>
-        <div class="row">
-          <a class="big" id="em" href="mailto:hello@gatherlyexperiences.com">hello@gatherlyexperiences.com</a>
-        </div>
+    <section class="about" id="about">
+      <p class="section-label">WHAT IS GATHERLY?</p>
+      <div>
+        <h2>Bringing the fun of gathering together,<br><em>wherever you are.</em></h2>
+        <p>
+          Gatherly is a virtual experience platform that brings people together to enjoy the fun of shared experiences, no matter the distance. Through interactive games, activities, and group experiences, we recreate the excitement of getting together in person in a virtual setting.
+          <br><br>
+          Whether it's team building with coworkers, celebrating with friends, or spending time with family, Gatherly makes it easy to share experiences, have fun, and create memorable moments from anywhere.
+        </p>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="activities" id="games">
+      <div class="activities-heading">
+        <p class="section-label">GAMES &amp; EXPERIENCES</p>
+        <h2>Find your<br>perfect category.</h2>
+        <p class="category-note">Choose what brings you together, then explore experiences made for the moment.</p>
+      </div>
+      <div class="activity-list" id="activity-list"></div>
+    </section>
+
+    <section class="contact" id="contact">
+      <p>READY WHEN YOU ARE</p>
+      <h2>Let's make something<br>fun happen.</h2>
+      <a href="mailto:hello@gatherlyexperiences.com">Start planning <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5"/></svg></a>
+    </section>
+  </div>
+
+  <!-- About -->
+  <div class="page" id="page-about" hidden>
+    <section class="about-hero">
+      <p>ABOUT GATHERLY</p>
+      <h1>Good things happen<br>when we gather.</h1>
+      <p>
+        We believe connection shouldn't depend on being in the same room.
+        Gatherly brings people together through fun, interactive virtual experiences
+        that turn screen time into quality time.
+      </p>
+      <div class="about-bubbles" aria-hidden="true"><i></i><i></i><i></i></div>
+    </section>
+
+    <section class="story-section">
+      <div class="story-label">
+        <p class="section-label">OUR STORY</p>
+        <span>Built for togetherness,<br>wherever you are.</span>
+      </div>
+      <div class="story-copy">
+        <h2>Connection is what<br><em>brings us together.</em></h2>
+        <p>
+          Gatherly was created around a simple idea: some of the best moments happen
+          when people come together.
+        </p>
+        <p>
+          Whether it's coworkers building stronger relationships, friends celebrating
+          a special occasion, or families staying connected across distances, shared
+          experiences bring people closer.
+        </p>
+        <p>
+          As more of our lives move online, we wanted to make virtual gatherings feel
+          less like another video call and more like something people genuinely look
+          forward to. Gatherly brings people together through interactive games,
+          creative activities, and hosted experiences that make connecting virtually
+          easy, engaging, and fun.
+        </p>
+      </div>
+    </section>
+
+    <section class="mission-panel">
+      <div class="mission-mark" aria-hidden="true">G</div>
+      <div>
+        <p>OUR GOAL</p>
+        <h2>Every gathering should be an opportunity to laugh, connect, and create meaningful moments—no matter the distance.</h2>
+        <a href="#services">Explore our experiences <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5"/></svg></a>
+      </div>
+    </section>
+
+    <section class="values">
+      <article>
+        <span>01</span>
+        <h3>Easy to join</h3>
+        <p>Simple experiences that let everyone focus on the fun, not the setup.</p>
+      </article>
+      <article>
+        <span>02</span>
+        <h3>Made for everyone</h3>
+        <p>Warm, inclusive activities where every personality has a way to participate.</p>
+      </article>
+      <article>
+        <span>03</span>
+        <h3>Genuinely connecting</h3>
+        <p>More than screen time—shared moments that people keep talking about.</p>
+      </article>
+    </section>
+  </div>
+
+  <!-- Contact -->
+  <div class="page" id="page-contact" hidden>
+    <section class="contact-page">
+      <p>CONTACT GATHERLY</p>
+      <h1>Let's create something<br>memorable together.</h1>
+      <p>Tell us about your group, occasion, or idea. We'll help you find the right virtual experience.</p>
+      <div class="contact-details">
+        <a href="tel:+16478215799"><span>PHONE</span>647-821-5799</a>
+        <a href="mailto:hello@gatherlyexperiences.com"><span>EMAIL</span>hello@gatherlyexperiences.com</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Self-hosted (coming soon) -->
+  <div class="page" id="page-self-hosted" hidden>
+    <section class="coming-soon">
+      <p>SELF-HOSTED EXPERIENCES</p>
+      <h1>Something fun<br>is coming soon.</h1>
+      <p>We're creating flexible experiences you'll be able to run yourself, anytime and anywhere.</p>
+      <a href="mailto:hello@gatherlyexperiences.com">Get launch updates <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5"/></svg></a>
+    </section>
+  </div>
+
+  <!-- Hosted categories -->
+  <div class="page" id="page-hosted" hidden>
+    <section class="hosted-page">
+      <div class="hosted-heading">
+        <p>VIRTUAL HOSTED EXPERIENCES</p>
+        <h1>Choose a category.<br>We'll bring the fun.</h1>
+      </div>
+      <div class="hosted-categories" id="hosted-categories"></div>
+    </section>
+  </div>
+
+  <!-- Category detail -->
+  <div class="page" id="page-category" hidden>
+    <section class="category-hero">
+      <a href="#/home">&larr; All categories</a>
+      <p id="category-kicker"></p>
+      <h1 id="category-title"></h1>
+      <p id="category-copy"></p>
+    </section>
+    <section class="category-games">
+      <div class="category-games-heading">
+        <p class="section-label">EXPLORE THE OPTIONS</p>
+        <h2>Choose an experience<br>for your gathering.</h2>
+      </div>
+      <div class="game-option-grid" id="game-option-grid"></div>
+    </section>
+    <section class="contact">
+      <p>NOT SURE WHICH ONE TO CHOOSE?</p>
+      <h2>We'll help you find<br>the perfect fit.</h2>
+      <a href="mailto:hello@gatherlyexperiences.com">Talk to Gatherly <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5"/></svg></a>
+    </section>
+  </div>
 </main>
 
-<footer class="chapter foot f-night" data-ink="light">
-  <div class="in">
-    <div class="foot-cols">
-      <nav aria-label="Footer">
-        <a href="#experiences">What we do</a>
-        <a href="#how">How it works</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </div>
-    <div class="legal">
-      <span>&copy; 2026 Gatherly Experiences</span>
-      <a href="#top">Back to top</a>
-    </div>
-  </div>
+<footer>
+  <a class="wordmark light" href="#/home">gatherly.</a>
+  <p>Virtual activities for real human connection.</p>
+  <span>&copy; 2026 Gatherly</span>
 </footer>
 
-<script>
-document.documentElement.classList.add('js');
-(function () {
-  var $ = function (s, r) { return (r || document).querySelector(s); };
-  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
-
-  /* header ink follows the chapter beneath it */
-  var hdr = $('#hdr');
-  var chapters = $$('[data-ink]').filter(function (n) { return n !== hdr; });
-  var ticking = false;
-  function inkNow() {
-    ticking = false;
-    var y = 40, ink = 'dark';
-    chapters.forEach(function (c) { var r = c.getBoundingClientRect(); if (r.top <= y && r.bottom > y) ink = c.getAttribute('data-ink'); });
-    hdr.setAttribute('data-ink', ink);
-  }
-  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(inkNow); } }, { passive: true });
-  inkNow();
-
-  /* entrances */
-  var rv = $$('.rv');
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    rv.forEach(function (n) { io.observe(n); });
-  } else { rv.forEach(function (n) { n.classList.add('in-view'); }); }
-
-  /* the drifting strip of call tiles */
-  var reel = $('#reel');
-  var cfg = [['t1','p-hat',1],['t3','p-headset',0.75],['t5','p-glasses',1.5],['t4','p-pair',1],['t3','p-plain',0.75],['t6','p-headset',1.5],['t1','p-glasses',1],['t3','p-pair',0.75],['t4','p-headset',1.5],['t5','p-plain',1]];
-  var NS = 'http://www.w3.org/2000/svg';
-  [0, 1].forEach(function () {
-    cfg.forEach(function (c) {
-      var s = document.createElementNS(NS, 'svg');
-      s.setAttribute('class', 'tile ' + c[0]); s.setAttribute('viewBox', '0 0 100 100'); s.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-      var u = document.createElementNS(NS, 'use'); u.setAttribute('href', '#' + c[1]); s.appendChild(u); reel.appendChild(s);
-    });
-  });
-})();
-</script>
-
-</body></html>
+<script src="site.js"></script>
+</body>
+</html>

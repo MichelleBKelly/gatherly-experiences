@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Trivia Night — Gatherly Experiences</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Red+Hat+Text:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="trivia.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="mark" href="/">Gatherly</a>
+  <span class="game-name">Trivia Night</span>
+  <span class="my-score" id="my-score" hidden></span>
+</header>
+
+<main>
+
+  <!-- Shown only until Firebase is configured (see TRIVIA-SETUP.md) -->
+  <section class="screen" id="screen-setup" hidden>
+    <div class="card">
+      <h1>Almost ready!</h1>
+      <p>The trivia game needs its free Firebase backend connected before it can run.</p>
+      <p>Open <strong>TRIVIA-SETUP.md</strong> in this project and follow the steps — it takes about 5 minutes.</p>
+      <p class="fine" id="setup-error"></p>
+    </div>
+  </section>
+
+  <!-- Team join -->
+  <section class="screen" id="screen-join" hidden>
+    <div class="card">
+      <h1>Trivia Night</h1>
+      <p class="lead">Grab your team, pick a name, and get ready to play.</p>
+      <form id="join-form" autocomplete="off">
+        <label class="field-label" for="team-name">Your team name</label>
+        <input id="team-name" name="team-name" maxlength="24" required placeholder="e.g. The Quizzy Bees">
+        <button class="btn" type="submit">Join the game</button>
+      </form>
+      <p class="error" id="join-error" role="alert"></p>
+      <p class="fine">One device per team is all you need.</p>
+    </div>
+  </section>
+
+  <!-- Lobby: waiting for the game to start -->
+  <section class="screen" id="screen-lobby" hidden>
+    <div class="card wide">
+      <h1>You're in!</h1>
+      <p class="lead">Waiting for the host to start the game…</p>
+      <p class="count" id="lobby-count"></p>
+      <div class="team-chips" id="lobby-teams"></div>
+      <div class="host-only">
+        <div class="host-panel">
+          <span class="host-tag">Host</span>
+          <button class="btn" id="btn-start" type="button">Start the game ▶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Question + countdown -->
+  <section class="screen" id="screen-question" hidden>
+    <div class="q-head">
+      <span class="q-count" id="q-count"></span>
+      <div class="timer" role="timer" aria-label="Time remaining">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="timer-bg" cx="60" cy="60" r="54"/>
+          <circle class="timer-fg" id="timer-ring" cx="60" cy="60" r="54"/>
+        </svg>
+        <span class="timer-num" id="timer-num">60</span>
+      </div>
+    </div>
+    <h2 class="q-text" id="q-text"></h2>
+    <div class="q-options needs-time" id="q-options"></div>
+    <p class="q-status" id="q-status"></p>
+    <div class="host-only">
+      <div class="host-panel">
+        <span class="host-tag">Host</span>
+        <span class="answered" id="answered-count"></span>
+        <button class="btn" id="btn-reveal" type="button">Reveal answer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Answer reveal -->
+  <section class="screen" id="screen-reveal" hidden>
+    <div class="card wide">
+      <p class="kicker">The answer is…</p>
+      <h2 class="reveal-answer" id="reveal-answer"></h2>
+      <p class="reveal-result" id="reveal-result"></p>
+      <div class="host-only">
+        <div class="host-panel col">
+          <span class="host-tag">Host — check answers, fix any close calls, then move on</span>
+          <div class="host-answers" id="host-answers"></div>
+          <button class="btn" id="btn-to-leaderboard" type="button">Show leaderboard</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Leaderboard -->
+  <section class="screen" id="screen-leaderboard" hidden>
+    <div class="card wide">
+      <h2>Leaderboard</h2>
+      <ol class="board" id="lb-list"></ol>
+      <div class="host-only">
+        <div class="host-panel">
+          <span class="host-tag">Host</span>
+          <button class="btn" id="btn-next" type="button">Next question →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final results -->
+  <section class="screen" id="screen-final" hidden>
+    <div class="card wide">
+      <h2>Final results</h2>
+      <p class="winner" id="winner"></p>
+      <ol class="board" id="final-list"></ol>
+      <div class="host-only">
+        <div class="host-panel">
+          <span class="host-tag">Host</span>
+          <button class="btn danger" id="btn-reset" type="button">Play again (clears teams &amp; scores)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="firebase-config.js"></script>
+<script src="questions.js"></script>
+<script type="module" src="trivia.js"></script>
+</body>
+</html>

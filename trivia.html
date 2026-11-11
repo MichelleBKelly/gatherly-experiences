@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Trivia Night — Gatherly Experiences</title>
+  <title>Holiday Game Show — Gatherly Experiences</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
 
 <header class="top">
   <a class="mark" href="/">gatherly.</a>
-  <span class="game-name">Trivia Night</span>
+  <span class="game-name">Holiday Game Show</span>
   <span class="my-score" id="my-score" hidden></span>
 </header>
 
@@ -33,8 +33,9 @@
   <!-- Team join -->
   <section class="screen" id="screen-join" hidden>
     <div class="card">
-      <h1>Trivia Night</h1>
-      <p class="lead">Grab your team, pick a name, and get ready to play.</p>
+      <p class="kicker">Six festive rounds</p>
+      <h1>Holiday Game Show</h1>
+      <p class="lead">Grab your team and get ready for holiday trivia, picture puzzles, music, and more.</p>
       <form id="join-form" autocomplete="off">
         <label class="field-label" for="team-name">Your team name</label>
         <input id="team-name" name="team-name" maxlength="24" required placeholder="e.g. The Quizzy Bees">
@@ -48,7 +49,7 @@
   <!-- Lobby: waiting for the game to start -->
   <section class="screen" id="screen-lobby" hidden>
     <div class="card wide">
-      <h1>You're in!</h1>
+      <h1>Let the festivities begin!</h1>
       <p class="lead">Waiting for the host to start the game…</p>
       <p class="count" id="lobby-count"></p>
       <div class="team-chips" id="lobby-teams"></div>
@@ -59,6 +60,20 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="screen" id="screen-round" hidden>
+    <div class="round-stage">
+      <div class="round-copy">
+        <p class="kicker" id="round-number"></p>
+        <h1 id="round-title"></h1>
+        <p id="round-description"></p>
+      </div>
+    </div>
+    <p class="fine">Your host will start the round when everyone is ready.</p>
+    <div class="host-only"><div class="host-panel">
+      <button class="btn" id="btn-round-start" type="button">Start this round</button>
+    </div></div>
   </section>
 
   <!-- Question + countdown -->
@@ -73,7 +88,14 @@
         <span class="timer-num" id="timer-num">60</span>
       </div>
     </div>
+    <p class="kicker" id="q-round"></p>
     <h2 class="q-text" id="q-text"></h2>
+    <div class="question-media" id="q-images" hidden></div>
+    <p class="question-instruction" id="q-instruction" hidden></p>
+    <details class="host-only host-cue" id="q-host-cue" hidden>
+      <summary>Host music / challenge notes (keep closed while screen sharing)</summary>
+      <p id="q-host-note"></p>
+    </details>
     <div class="q-options needs-time" id="q-options"></div>
     <p class="q-status" id="q-status"></p>
     <div class="host-only">
@@ -90,6 +112,9 @@
     <div class="card wide">
       <p class="kicker">The answer is…</p>
       <h2 class="reveal-answer" id="reveal-answer"></h2>
+      <p id="reveal-explanation" class="lead" hidden></p>
+      <div id="reveal-ranked" class="survey-board" hidden></div>
+      <div id="reveal-images" class="question-media" hidden></div>
       <p class="reveal-result" id="reveal-result"></p>
       <div class="host-only">
         <div class="host-panel col">

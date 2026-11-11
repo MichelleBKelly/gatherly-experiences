@@ -1,0 +1,266 @@
+[
+  {
+    "document": 0,
+    "page": 1,
+    "image": 1,
+    "file": "slides-p01-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 2,
+    "image": 1,
+    "file": "slides-p02-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 3,
+    "image": 1,
+    "file": "slides-p02-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 3,
+    "image": 2,
+    "file": "slides-p03-2.webp"
+  },
+  {
+    "document": 0,
+    "page": 4,
+    "image": 1,
+    "file": "slides-p04-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 5,
+    "image": 1,
+    "file": "slides-p04-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 5,
+    "image": 2,
+    "file": "slides-p05-2.webp"
+  },
+  {
+    "document": 0,
+    "page": 6,
+    "image": 1,
+    "file": "slides-p04-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 6,
+    "image": 2,
+    "file": "slides-p06-2.webp"
+  },
+  {
+    "document": 0,
+    "page": 7,
+    "image": 1,
+    "file": "slides-p07-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 8,
+    "image": 1,
+    "file": "slides-p07-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 9,
+    "image": 1,
+    "file": "slides-p07-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 9,
+    "image": 2,
+    "file": "slides-p09-2.webp"
+  },
+  {
+    "document": 0,
+    "page": 10,
+    "image": 1,
+    "file": "slides-p10-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 11,
+    "image": 1,
+    "file": "slides-p11-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 11,
+    "image": 2,
+    "file": "slides-p11-2.webp"
+  },
+  {
+    "document": 0,
+    "page": 12,
+    "image": 1,
+    "file": "slides-p10-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 12,
+    "image": 2,
+    "file": "slides-p12-2.webp"
+  },
+  {
+    "document": 0,
+    "page": 13,
+    "image": 1,
+    "file": "slides-p13-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 14,
+    "image": 1,
+    "file": "slides-p14-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 15,
+    "image": 1,
+    "file": "slides-p13-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 16,
+    "image": 1,
+    "file": "slides-p16-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 17,
+    "image": 1,
+    "file": "slides-p16-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 17,
+    "image": 2,
+    "file": "slides-p17-2.webp"
+  },
+  {
+    "document": 0,
+    "page": 17,
+    "image": 3,
+    "file": "slides-p17-3.webp"
+  },
+  {
+    "document": 0,
+    "page": 17,
+    "image": 4,
+    "file": "slides-p17-4.webp"
+  },
+  {
+    "document": 0,
+    "page": 17,
+    "image": 5,
+    "file": "slides-p17-5.webp"
+  },
+  {
+    "document": 0,
+    "page": 18,
+    "image": 1,
+    "file": "slides-p16-1.webp"
+  },
+  {
+    "document": 0,
+    "page": 18,
+    "image": 2,
+    "file": "slides-p18-2.webp"
+  },
+  {
+    "document": 1,
+    "page": 5,
+    "image": 1,
+    "file": "questions-p05-1.webp"
+  },
+  {
+    "document": 1,
+    "page": 5,
+    "image": 2,
+    "file": "questions-p05-2.webp"
+  },
+  {
+    "document": 1,
+    "page": 5,
+    "image": 3,
+    "file": "questions-p05-3.webp"
+  },
+  {
+    "document": 1,
+    "page": 6,
+    "image": 1,
+    "file": "questions-p06-1.webp"
+  },
+  {
+    "document": 1,
+    "page": 6,
+    "image": 2,
+    "file": "questions-p06-2.webp"
+  },
+  {
+    "document": 1,
+    "page": 11,
+    "image": 1,
+    "file": "questions-p11-1.webp"
+  },
+  {
+    "document": 1,
+    "page": 11,
+    "image": 2,
+    "file": "questions-p11-2.webp"
+  },
+  {
+    "document": 1,
+    "page": 11,
+    "image": 3,
+    "file": "questions-p11-3.webp"
+  },
+  {
+    "document": 1,
+    "page": 11,
+    "image": 4,
+    "file": "questions-p11-4.webp"
+  },
+  {
+    "document": 1,
+    "page": 12,
+    "image": 1,
+    "file": "questions-p12-1.webp"
+  },
+  {
+    "document": 1,
+    "page": 12,
+    "image": 2,
+    "file": "questions-p12-2.webp"
+  },
+  {
+    "document": 1,
+    "page": 13,
+    "image": 1,
+    "file": "questions-p13-1.webp"
+  },
+  {
+    "document": 1,
+    "page": 13,
+    "image": 2,
+    "file": "questions-p13-2.webp"
+  },
+  {
+    "document": 1,
+    "page": 13,
+    "image": 3,
+    "file": "questions-p13-3.webp"
+  },
+  {
+    "document": 1,
+    "page": 14,
+    "image": 1,
+    "file": "questions-p14-1.webp"
+  }
+]

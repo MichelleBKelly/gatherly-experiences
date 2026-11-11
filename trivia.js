@@ -14,11 +14,15 @@ const MAX_POINTS = 1000; // instant correct answer
 const MIN_POINTS = 500;  // correct answer at the buzzer
 
 const $ = (id) => document.getElementById(id);
-const SCREENS = ["setup", "join", "lobby", "question", "reveal", "leaderboard", "final"];
-const show = (name) => SCREENS.forEach((s) => { $("screen-" + s).hidden = s !== name; });
+const SCREENS = ["setup", "join", "lobby", "round", "question", "reveal", "leaderboard", "final"];
+const show = (name) => {
+  document.body.dataset.screen = name;
+  SCREENS.forEach((s) => { $("screen-" + s).hidden = s !== name; });
+};
 
 // Typed-answer matching: ignore case, punctuation, and leading "the/a/an".
 const norm = (s) => String(s).toLowerCase().trim()
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .replace(/^(the|a|an)\s+/, "")
   .replace(/[^a-z0-9\s]/g, "")
   .replace(/\s+/g, " ")
@@ -27,6 +31,50 @@ const norm = (s) => String(s).toLowerCase().trim()
 // Speed-based scoring: 1000 pts down to 500 pts over the 60-second timer.
 const pointsFor = (correct, timeMs) =>
   correct ? Math.round(MIN_POINTS + (MAX_POINTS - MIN_POINTS) * Math.max(0, 1 - timeMs / (QUESTION_SECONDS * 1000))) : 0;
+
+const surveyMatch = (q, answer) => q.rankedAnswers?.find((row) =>
+  row.aliases.some((alias) => norm(alias) === norm(answer)));
+const scoreForAnswer = (answer, q = currentQuestion()) => {
+  if (!answer?.correct) return 0;
+  if (Number.isFinite(answer.awardedPoints)) return answer.awardedPoints;
+  if (q.rankedAnswers) return surveyMatch(q, answer.answer)?.points || 0;
+  return q.points ?? pointsFor(true, answer.timeMs);
+};
+
+function renderImages(id, images = []) {
+  const wrap = $(id);
+  wrap.replaceChildren();
+  wrap.hidden = images.length === 0;
+  wrap.classList.toggle("image-grid", images.length > 1);
+  images.forEach((item, i) => {
+    const figure = document.createElement("figure");
+    figure.className = item.presentation || "clue-image";
+    const img = document.createElement("img");
+    img.src = item.src;
+    img.alt = item.alt;
+    img.decoding = "async";
+    figure.append(img);
+    if (images.length > 1) {
+      const label = document.createElement("figcaption");
+      label.textContent = "ABCD"[i] || String(i + 1);
+      figure.append(label);
+    }
+    wrap.append(figure);
+  });
+}
+
+function applyRoundTheme() {
+  const round = HOLIDAY_ROUNDS[(currentQuestion()?.round || 1) - 1];
+  document.body.style.setProperty("--round-background", `url("assets/holiday/${round.background}")`);
+  return round;
+}
+
+function renderRound() {
+  const round = applyRoundTheme();
+  $("round-number").textContent = `Round ${currentQuestion().round} of ${HOLIDAY_ROUNDS.length}`;
+  $("round-title").textContent = round.title;
+  $("round-description").textContent = round.description;
+}
 
 // ---------- setup guard ----------
 if (typeof FIREBASE_CONFIG === "undefined" || String(FIREBASE_CONFIG.apiKey).startsWith("PASTE")) {
@@ -121,6 +169,7 @@ if (hostAuthed) {
 
 // ---------- render ----------
 function render() {
+  if (game?.state === "lobby") questionRenderKey = null;
   if (!myTeamId && !hostAuthed) { show("join"); return; }
   if (!game) { show("lobby"); renderLobby(); return; }
   watchMyAnswer();
@@ -130,14 +179,16 @@ function render() {
   }
   switch (game.state) {
     case "lobby": show("lobby"); renderLobby(); break;
+    case "round": show("round"); renderRound(); break;
     case "question": show("question"); renderQuestion(); break;
     case "reveal": show("reveal"); renderReveal(); break;
-    case "leaderboard": show("leaderboard"); renderBoard($("lb-list")); break;
+    case "leaderboard": show("leaderboard"); applyRoundTheme(); renderBoard($("lb-list")); break;
     case "final": show("final"); renderFinal(); break;
   }
 }
 
 function renderLobby() {
+  applyRoundTheme();
   $("lobby-count").textContent = teams.length
     ? `${teams.length} team${teams.length === 1 ? "" : "s"} in the game`
     : "No teams yet — share the link!";
@@ -160,8 +211,16 @@ function renderQuestion() {
   // (e.g. the server timestamp confirming) doesn't wipe a player's selection.
   if (questionRenderKey === game.questionIndex && !$("screen-question").hidden) return;
   questionRenderKey = game.questionIndex;
+  applyRoundTheme();
   $("q-count").textContent = `Question ${game.questionIndex + 1} of ${QUESTION_LIST.length}`;
+  $("q-round").textContent = `Round ${q.round} · ${HOLIDAY_ROUNDS[q.round - 1].title}`;
   $("q-text").textContent = q.question;
+  renderImages("q-images", q.images);
+  $("q-instruction").hidden = !q.instruction;
+  $("q-instruction").textContent = q.instruction || "";
+  $("q-host-cue").hidden = !q.hostNote;
+  $("q-host-cue").open = false;
+  $("q-host-note").textContent = q.hostNote || "";
   $("q-status").textContent = myTeamId ? "" : "You're watching as the host.";
 
   const box = $("q-options");
@@ -186,9 +245,10 @@ function renderQuestion() {
     });
   } else {
     const form = document.createElement("form");
-    const input = document.createElement("input");
-    input.type = "text";
-    input.maxLength = 80;
+    const input = document.createElement(q.manualReview ? "textarea" : "input");
+    if (!q.manualReview) input.type = "text";
+    input.maxLength = q.manualReview ? 1200 : 160;
+    input.setAttribute("aria-label", q.manualReview ? "List the differences you found" : "Your answer");
     input.placeholder = "Type your answer…";
     input.required = true;
     const btn = document.createElement("button");
@@ -230,14 +290,32 @@ function startTimer() {
 function renderReveal() {
   const q = currentQuestion();
   if (!q) return;
-  $("reveal-answer").textContent = q.type === "choice" ? q.options[q.answer] : q.answer[0];
+  applyRoundTheme();
+  $("reveal-answer").textContent = q.answerLabel || (q.manualReview ? "Host review" : q.rankedAnswers ? "The survey says…" : q.type === "choice" ? q.options[q.answer] : q.answer[0]);
+  $("reveal-explanation").textContent = q.explanation || "";
+  $("reveal-explanation").hidden = !q.explanation;
+  renderImages("reveal-images", q.revealImages || q.images);
+  const survey = $("reveal-ranked");
+  survey.replaceChildren();
+  survey.hidden = !q.rankedAnswers;
+  (q.rankedAnswers || []).forEach((answer) => {
+    const row = document.createElement("div");
+    const label = document.createElement("span");
+    const points = document.createElement("strong");
+    label.textContent = answer.label;
+    points.textContent = `${answer.points} pts`;
+    row.append(label, points);
+    survey.append(row);
+  });
   const me = myTeam();
   const el = $("reveal-result");
   if (me) {
     if (!myAnswer) {
       el.textContent = "No answer in time — 0 pts";
+    } else if (q.manualReview && myAnswer.awardedPoints == null) {
+      el.textContent = "Your host is reviewing your differences.";
     } else if (myAnswer.correct) {
-      el.innerHTML = `Correct! <span class="pts">+${pointsFor(true, myAnswer.timeMs)} pts</span>`;
+      el.innerHTML = `Correct! <span class="pts">+${scoreForAnswer(myAnswer)} pts</span>`;
     } else {
       el.textContent = `Not this time, ${me.name} — 0 pts`;
     }
@@ -265,8 +343,9 @@ function renderBoard(el) {
     el.append(li);
   });
   if (hostAuthed && el.id === "lb-list") {
+    const next = QUESTION_LIST[game.questionIndex + 1];
     $("btn-next").textContent = game.questionIndex + 1 < QUESTION_LIST.length
-      ? "Next question →"
+      ? next.round !== currentQuestion().round ? "Next round →" : "Next question →"
       : "See final results 🏆";
   }
 }
@@ -299,16 +378,41 @@ function renderHostAnswers() {
     ans.textContent = a ? a.answer : "— no answer —";
     const pts = document.createElement("span");
     pts.className = "ha-pts";
-    pts.textContent = a ? `${pointsFor(a.correct, a.timeMs)} pts` : "0 pts";
+    pts.textContent = a ? `${scoreForAnswer(a)} pts` : "0 pts";
     row.append(name, ans, pts);
     if (a) {
-      const toggle = document.createElement("button");
-      toggle.type = "button";
-      toggle.className = "ha-toggle " + (a.correct ? "ok" : "no");
-      toggle.textContent = a.correct ? "✓ correct" : "✗ wrong";
-      toggle.addEventListener("click", () =>
-        updateDoc(doc(answersCol, a.id), { correct: !a.correct }));
-      row.append(toggle);
+      const q = currentQuestion();
+      if (q.rankedAnswers || q.manualReview) {
+        const select = document.createElement("select");
+        select.setAttribute("aria-label", `Award points to ${t.name}`);
+        if (q.manualReview && a.awardedPoints == null) {
+          const pending = document.createElement("option");
+          pending.value = "";
+          pending.textContent = "Review differences…";
+          pending.disabled = true;
+          select.append(pending);
+        }
+        const values = q.rankedAnswers ? [0, ...q.rankedAnswers.map((r) => r.points)] : Array.from({ length: 11 }, (_, i) => i);
+        values.forEach((value) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = q.rankedAnswers ? value === 0 ? "0 — no match" : `${value} — ${q.rankedAnswers.find((r) => r.points === value).label}` : `${value} differences`;
+          select.append(option);
+        });
+        select.value = q.manualReview && a.awardedPoints == null ? "" : scoreForAnswer(a);
+        select.addEventListener("change", () => updateDoc(doc(answersCol, a.id), {
+          awardedPoints: Number(select.value), correct: Number(select.value) > 0
+        }));
+        row.append(select);
+      } else {
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "ha-toggle " + (a.correct ? "ok" : "no");
+        toggle.textContent = a.correct ? "✓ correct" : "✗ wrong";
+        toggle.addEventListener("click", () =>
+          updateDoc(doc(answersCol, a.id), { correct: !a.correct }));
+        row.append(toggle);
+      }
     }
     wrap.append(row);
   });
@@ -350,6 +454,7 @@ async function submitAnswer(value, display) {
     teamName: (myTeam() || {}).name || "",
     answer: display,
     correct,
+    awardedPoints: null,
     timeMs,
     submittedAt: serverTimestamp()
   });
@@ -362,8 +467,12 @@ $("btn-start").addEventListener("click", () => {
     alert("No questions yet — add some in questions.js first!");
     return;
   }
-  updateDoc(gameRef, { state: "question", questionIndex: 0, questionStart: serverTimestamp() });
+  questionRenderKey = null;
+  updateDoc(gameRef, { state: "round", questionIndex: 0, questionStart: null });
 });
+
+$("btn-round-start").addEventListener("click", () =>
+  updateDoc(gameRef, { state: "question", questionStart: serverTimestamp() }));
 
 $("btn-reveal").addEventListener("click", () =>
   updateDoc(gameRef, { state: "reveal" }));
@@ -373,20 +482,31 @@ $("btn-to-leaderboard").addEventListener("click", async (e) => {
   btn.disabled = true;
   try {
     const qIndex = game.questionIndex;
+    // The Web SDK's transaction.get accepts document references, not queries.
+    const submitted = await getDocs(query(answersCol, where("qIndex", "==", qIndex)));
+    if (currentQuestion().manualReview && submitted.docs.some((d) => d.data().awardedPoints == null)) {
+      alert("Review each team's differences and assign points before showing the leaderboard.");
+      return;
+    }
+    const answerRefs = submitted.docs.map((d) => d.ref);
     await runTransaction(db, async (tx) => {
       const gSnap = await tx.get(gameRef);
       if (gSnap.data().scoredFor === qIndex) {
         tx.update(gameRef, { state: "leaderboard" });
         return;
       }
-      const aSnap = await tx.get(query(answersCol, where("qIndex", "==", qIndex)));
-      const teamIds = [...new Set(aSnap.docs.map((d) => d.data().teamId))];
+      const answerSnaps = [];
+      for (const ref of answerRefs) {
+        const snap = await tx.get(ref);
+        if (snap.exists()) answerSnaps.push(snap);
+      }
+      const teamIds = [...new Set(answerSnaps.map((d) => d.data().teamId))];
       const teamSnaps = {};
       for (const id of teamIds) teamSnaps[id] = await tx.get(doc(teamsCol, id));
       const deltas = {};
-      aSnap.docs.forEach((d) => {
+      answerSnaps.forEach((d) => {
         const a = d.data();
-        const pts = pointsFor(a.correct, a.timeMs);
+        const pts = scoreForAnswer(a, QUESTION_LIST[qIndex]);
         tx.update(d.ref, { points: pts });
         deltas[a.teamId] = (deltas[a.teamId] || 0) + pts;
       });
@@ -403,7 +523,7 @@ $("btn-to-leaderboard").addEventListener("click", async (e) => {
 $("btn-next").addEventListener("click", () => {
   if (game.questionIndex + 1 < QUESTION_LIST.length) {
     updateDoc(gameRef, {
-      state: "question",
+      state: QUESTION_LIST[game.questionIndex + 1].round !== currentQuestion().round ? "round" : "question",
       questionIndex: increment(1),
       questionStart: serverTimestamp()
     });
@@ -423,4 +543,5 @@ $("btn-reset").addEventListener("click", async () => {
     }
   }
   await updateDoc(gameRef, { state: "lobby", questionIndex: 0, scoredFor: -1, questionStart: null });
+  questionRenderKey = null;
 });

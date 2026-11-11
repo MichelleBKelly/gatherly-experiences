@@ -323,3 +323,74 @@ body.host .host-only { display: block; width: 100%; }
   .timer { width: 84px; height: 84px; }
   .timer-num { font-size: 1.6rem; }
 }
+
+/* Holiday artwork extracted from the supplied game-show PDF. */
+[hidden] { display: none !important; }
+body {
+  --round-background: url("assets/holiday/slides-p01-1.webp");
+  background: #07182b;
+  background-image: linear-gradient(#06152599, #061525c9), var(--round-background);
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+.top { background: #07182bef; border-color: #ffffff26; }
+.mark { color: #fff; }
+.game-name { color: #cfdef0; }
+.my-score { background: #dcecff; color: #10253d; }
+.card { border-color: #ffffff8c; box-shadow: 0 16px 64px #0005; }
+#screen-question {
+  background: #fffffff5;
+  border: 1px solid #ffffff99;
+  border-radius: 28px;
+  padding: clamp(18px, 4vw, 36px);
+  box-shadow: 0 16px 64px #0005;
+}
+.round-stage {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--round-background) center / cover;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  box-shadow: 0 16px 64px #0006;
+}
+.round-copy { width: 58%; color: #fff; text-align: center; }
+.round-copy h1 { font-size: clamp(1.1rem, 3.8vw, 2.8rem); line-height: 1.12; margin: 8px 0; }
+.round-copy p { font-size: clamp(.7rem, 1.7vw, 1.1rem); line-height: 1.4; margin: 8px 0; }
+.round-copy .kicker { color: #ffe5a4; }
+#screen-round > .fine { color: #e1eafa; text-align: center; }
+.q-text { margin-bottom: 20px; }
+.question-media { width: 100%; max-width: 800px; margin: 0 auto 24px; }
+.question-media figure { margin: 0; overflow: hidden; border-radius: 16px; background: #e9eef4; }
+.question-media img { display: block; max-width: 100%; max-height: 380px; width: auto; height: auto; margin: auto; object-fit: contain; }
+.question-media.image-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.question-media.image-grid img { width: 100%; height: 180px; object-fit: cover; }
+.question-media figcaption { text-align: center; padding: 8px; font-weight: 800; background: #122a45; color: white; }
+/* Show the rebus slide itself, excluding the editor chrome and answer sidebar. */
+.question-media .rebus { position: relative; aspect-ratio: 2.4; background: #6a9d69; }
+.question-media .rebus img { position: absolute; width: 128%; max-width: none; max-height: none; left: -28%; top: -46%; }
+.question-media .differences img { width: 100%; max-height: none; }
+.question-instruction { text-align: center; margin: 0 0 20px; color: #485971; }
+.host-cue { width: 100%; margin: 0 0 18px; padding: 14px; background: #fff1d5; border-radius: 12px; }
+.host-cue summary { cursor: pointer; font-weight: 700; }
+.q-options textarea { width: 100%; min-height: 140px; resize: vertical; font: inherit; padding: 14px; border-radius: 14px; border: 1px solid var(--ink); }
+.q-options form textarea { flex: 1; }
+.q-options form:has(textarea) { flex-direction: column; }
+.survey-board { max-width: 640px; margin: 20px auto; text-align: left; }
+.survey-board > div { display: flex; justify-content: space-between; gap: 16px; padding: 14px; margin-bottom: 8px; background: #edf3fa; border-radius: 10px; }
+.survey-board strong { white-space: nowrap; color: #203d60; }
+.ha-row select { max-width: 100%; padding: 8px; font: inherit; border-radius: 8px; }
+@media (max-width: 640px) {
+  .top { min-height: 74px; height: auto; flex-wrap: wrap; padding: 14px 18px; gap: 8px 14px; }
+  .game-name { font-size: .85rem; }
+  main { padding: 16px; }
+  .my-score { font-size: .8rem; padding: 6px 10px; }
+  .round-stage { border-radius: 16px; }
+  .round-copy p:not(.kicker) { font-size: .65rem; }
+  .question-media.image-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .question-media.image-grid img { height: 150px; }
+  .q-count { font-size: .9rem; }
+  .q-options form input, .q-options form textarea { min-width: 0; }
+}

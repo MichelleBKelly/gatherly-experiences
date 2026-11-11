@@ -44,7 +44,13 @@ service cloud.firestore {
 
 ## 4. Add your questions
 
-Open `questions.js` and replace the sample questions. Two types:
+`questions.js` now includes the Holiday Game Show from the two supplied PDFs:
+49 questions and challenges across six rounds. Round title screens use the
+original artwork; image clues and answer images load from `assets/holiday/`.
+All 35 extracted images are retained there, with their source page numbers in
+`assets/holiday/manifest.json`.
+
+Two base question types:
 
 ```js
 // Multiple choice — "answer" is the index of the correct option (0 = first):
@@ -54,8 +60,34 @@ Open `questions.js` and replace the sample questions. Two types:
 { type: "text", question: "...", answer: ["paris", "paris france"] }
 ```
 
-Scoring is speed-based: correct answers earn **500–1000 points** depending on
-how fast they come in during the 60-second timer.
+Holiday questions award **10 points** per correct answer, with a 60-second
+timer. Festive Feud awards the source's **10–30 survey points** for one answer
+per team. Its reveal screen shows all five answers, and the host can select
+the matching survey answer for close wording. Spot the Difference is manually
+reviewed: assign **0–10 points**, one per valid difference, before proceeding.
+Questions without a `points` field retain the original speed-based scoring.
+
+### Holiday host preparation
+
+- The music round contains the six listed songs plus the Jingle Bells example
+  from the slide deck. **Neither PDF includes audio.** Prepare clips in your
+  own player and enable Zoom's computer-audio sharing. The in-game host notes
+  identify each song; keep those notes collapsed while sharing the screen.
+  Order: Winter Wonderland (Michael Bublé), Jingle Bell Rock (Bobby Helms),
+  Let It Snow! (Dean Martin), Snowman (Sia), Rockin' Around the Christmas Tree
+  (Brenda Lee), Last Christmas (Wham!), Jingle Bells.
+- Decode the Decor contains the one illustrated rebus in the provided deck:
+  **N + ice + list = nice list**. The external puzzle URL in the question PDF
+  is a reference; its additional puzzles are not embedded in either PDF.
+- Two source inconsistencies were corrected: the animal pictured as the odd
+  one out is a **donkey**, although the text calls it a moose; the plant answer
+  is **Rose**, because the source's “Sunflower” is absent from its options.
+- Round 1 includes all **nine** supplied questions despite its “8 questions”
+  heading. The slide's “Festive Feud, Round 4” artwork is retained in the
+  image library; the game correctly labels that round **5**.
+- Spot the Difference uses the supplied Santa comparison. The PDF requests
+  ten differences but provides no answer key. Review the actual picture and
+  award points only for visible differences.
 
 ## 5. Commit and push
 
@@ -71,6 +103,7 @@ Push these files to GitHub and the game goes live at
   play from their phone or laptop. One device per team.
 - Each question runs on a 60-second countdown. When time's up (or everyone's
   in), click **Reveal answer**, then **Show leaderboard**, then **Next question**.
+- At each round boundary, click **Start this round** to begin its first timer.
 - On the final question the host button becomes **See final results 🏆**.
   From there, **Play again** wipes teams and scores for a fresh game.
 - Tip: share your host screen on Zoom so everyone can see the timer and

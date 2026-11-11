@@ -9,3 +9,10 @@ The [Gatherly](https://gatherlyexperiences.com) website — a static HTML/CSS/JS
 ## Trivia Night
 
 A live team trivia game for Zoom events lives at `/trivia` ([trivia.html](trivia.html)). Teams join on their own devices, answer on a 60-second timer, and a host controls the pacing. See [TRIVIA-SETUP.md](TRIVIA-SETUP.md) for the one-time Firebase setup and how to add questions in [questions.js](questions.js).
+
+The current Holiday Game Show includes 49 questions and challenges across six
+rounds, using the supplied PDF artwork. Music clips must be played separately
+by the host; see the preparation notes in TRIVIA-SETUP.md.
+
+Run the offline content, rendering, round-transition, and scoring checks with
+`node --test tests/trivia.test.cjs`. No build step or npm dependencies are needed.

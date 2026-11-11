@@ -1,5 +1,6 @@
 ﻿// Holiday Game Show: content extracted from the two supplied PDFs.
 // Standard questions award 10 points; Feud uses survey points; timer: 60 seconds.
+const QUESTION_SET_ID = 'holiday-game-show-49-v1';
 const HOLIDAY_ROUNDS = [
   { title: 'Holiday Brain Freeze', background: 'slides-p01-1.webp', description: 'Nine questions to warm up your holiday knowledge.' },
   { title: 'Decode the Decor', background: 'slides-p04-1.webp', description: 'Solve the holiday picture puzzle.' },

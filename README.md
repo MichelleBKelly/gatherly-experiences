@@ -14,5 +14,10 @@ The current Holiday Game Show includes 49 questions and challenges across six
 rounds, using the supplied PDF artwork. Music clips must be played separately
 by the host; see the preparation notes in TRIVIA-SETUP.md.
 
+Hosts create a game at `/trivia?host=1`. Each game gets its own code and player
+URL (`/trivia?game=CODE`), with independent teams, answers, and scores. The
+host lobby includes a copyable player link and a separate link to resume
+hosting. Opening `/trivia` shows the create/join screen.
+
 Run the offline content, rendering, round-transition, and scoring checks with
 `node --test tests/trivia.test.cjs`. No build step or npm dependencies are needed.

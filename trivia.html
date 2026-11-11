@@ -8,17 +8,72 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="trivia.css">
+  <link rel="stylesheet" href="trivia.css?v=holiday-rooms-2">
 </head>
 <body>
 
 <header class="top">
   <a class="mark" href="/">gatherly.</a>
   <span class="game-name">Holiday Game Show</span>
+  <span class="session-code" id="session-code" hidden></span>
   <span class="my-score" id="my-score" hidden></span>
 </header>
 
 <main>
+
+  <section class="screen" id="screen-home">
+    <div class="card">
+      <p class="kicker">Six festive rounds</p>
+      <h1>Holiday Game Show</h1>
+      <p class="lead">A fresh game for every gathering.</p>
+      <button class="btn" id="btn-create-home" type="button" disabled>Host a new game</button>
+      <div class="join-divider">Joining a game?</div>
+      <form id="game-code-form">
+        <label class="field-label" for="game-code-input">Game code or player link</label>
+        <input id="game-code-input" type="text" required maxlength="300" placeholder="Paste your host's code or link" autocomplete="off" spellcheck="false">
+        <button class="btn" id="btn-join-code" type="submit" disabled>Find my game</button>
+      </form>
+      <p class="error" id="home-error" role="alert"></p>
+      <p class="fine" id="boot-status">Connecting to the game…</p>
+      <noscript>Enable JavaScript to host or join a game.</noscript>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-host" hidden>
+    <div class="card">
+      <p class="kicker">Host controls</p>
+      <h1 id="host-heading">Create a new game</h1>
+      <p class="lead" id="host-description">Get a fresh game code and a link to share with your players.</p>
+      <form id="host-form">
+        <label class="field-label" for="host-pin">Host PIN</label>
+        <input id="host-pin" type="password" required maxlength="100" autocomplete="current-password">
+        <button class="btn" id="btn-host-submit" type="submit">Create game</button>
+      </form>
+      <p class="error" id="host-error" role="alert"></p>
+      <a class="text-link" href="trivia.html">Back to games</a>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-loading" hidden>
+    <div class="card"><h1>Finding your game…</h1><p class="lead">Getting the teams and questions ready.</p></div>
+  </section>
+
+  <section class="screen" id="screen-unavailable" hidden>
+    <div class="card">
+      <h1 id="unavailable-title">Game unavailable</h1>
+      <p class="lead" id="unavailable-message"></p>
+      <a class="btn" href="trivia.html">Find or create a game</a>
+    </div>
+  </section>
+
+  <aside class="share-panel host-only" id="game-share" hidden aria-label="Share this game">
+    <div class="share-heading"><strong>Invite your players</strong><span>Game code: <strong id="share-code"></strong></span></div>
+    <label class="field-label" for="player-link">Player link</label>
+    <div class="share-link-row"><input id="player-link" type="text" readonly><button class="btn" id="btn-copy-player" type="button">Copy player link</button></div>
+    <details><summary>Your host link — save this to return</summary><input id="host-link" type="text" readonly aria-label="Your host link"></details>
+    <p class="fine" id="copy-status" role="status"></p>
+    <a class="text-link" href="trivia.html?host=1">Create another game</a>
+  </aside>
 
   <!-- Shown only until Firebase is configured (see TRIVIA-SETUP.md) -->
   <section class="screen" id="screen-setup" hidden>
@@ -36,6 +91,7 @@
       <p class="kicker">Six festive rounds</p>
       <h1>Holiday Game Show</h1>
       <p class="lead">Grab your team and get ready for holiday trivia, picture puzzles, music, and more.</p>
+      <p class="fine" id="join-game-code"></p>
       <form id="join-form" autocomplete="off">
         <label class="field-label" for="team-name">Your team name</label>
         <input id="team-name" name="team-name" maxlength="24" required placeholder="e.g. The Quizzy Bees">
@@ -50,7 +106,7 @@
   <section class="screen" id="screen-lobby" hidden>
     <div class="card wide">
       <h1>Let the festivities begin!</h1>
-      <p class="lead">Waiting for the host to start the game…</p>
+      <p class="lead" id="lobby-description">Waiting for the host to start the game…</p>
       <p class="count" id="lobby-count"></p>
       <div class="team-chips" id="lobby-teams"></div>
       <div class="host-only">
@@ -149,7 +205,7 @@
       <div class="host-only">
         <div class="host-panel">
           <span class="host-tag">Host</span>
-          <button class="btn danger" id="btn-reset" type="button">Play again (clears teams &amp; scores)</button>
+          <button class="btn" id="btn-reset" type="button">Create a new game</button>
         </div>
       </div>
     </div>
@@ -158,7 +214,7 @@
 </main>
 
 <script src="firebase-config.js"></script>
-<script src="questions.js"></script>
-<script type="module" src="trivia.js"></script>
+<script src="questions.js?v=holiday-rooms-2"></script>
+<script type="module" src="trivia.js?v=holiday-rooms-2"></script>
 </body>
 </html>

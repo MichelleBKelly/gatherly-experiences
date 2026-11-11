@@ -96,16 +96,23 @@ Push these files to GitHub and the game goes live at
 
 ## Running the game on Zoom
 
-- **You (host):** open `gatherlyexperiences.com/trivia?host=1` and enter your
-  PIN. You get the host panel: start the game, reveal answers, fix any typed
-  answers that were close enough, and advance to the next question.
-- **Players:** open `gatherlyexperiences.com/trivia`, enter a team name, and
-  play from their phone or laptop. One device per team.
+- **You (host):** open `gatherlyexperiences.com/trivia?host=1`, enter your PIN,
+  and click **Create game**. Each game starts in a fresh lobby with a unique
+  eight-character game code, separate teams, answers, and scores. The host
+  panel lets you start, reveal answers, review close calls, and advance.
+- **Share:** copy the **Player link** from the invite panel. It looks like
+  `gatherlyexperiences.com/trivia?game=ABCDEFGH`. Save the separate host link
+  (`?game=ABCDEFGH&host=1`) to return to the same game. The host PIN is required
+  again in a new browser session.
+- **Players:** open the player link and enter a team name, or open
+  `gatherlyexperiences.com/trivia` and enter the game code. One device per team.
+  A browser remembers its team separately for each game.
 - Each question runs on a 60-second countdown. When time's up (or everyone's
   in), click **Reveal answer**, then **Show leaderboard**, then **Next question**.
 - At each round boundary, click **Start this round** to begin its first timer.
 - On the final question the host button becomes **See final results 🏆**.
-  From there, **Play again** wipes teams and scores for a fresh game.
+  From there, **Create a new game** opens the host creation form. Existing
+  games and their scores are preserved.
 - Tip: share your host screen on Zoom so everyone can see the timer and
   leaderboard big — players still answer on their own devices.
 
@@ -120,4 +127,13 @@ python -m http.server 8000
 ```
 
 then open `http://localhost:8000/trivia.html?host=1` in one window (host) and
-`http://localhost:8000/trivia.html` in another (player).
+create a game. Open its generated player link in another browser window or
+incognito context. The unqualified `/trivia` URL always opens the game picker,
+never the previous shared game or an old answer screen.
+
+Game data lives under `trivia/{gameCode}` with `teams` and `answers`
+subcollections, so the existing `/trivia/{document=**}` rules also cover new
+games. No rules change is needed. Each game stores its question-set version;
+incompatible or missing games display a recovery screen. The HTML loads
+versioned scripts/styles to avoid reusing cached sample questions after an
+update.

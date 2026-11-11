@@ -11,6 +11,6 @@ const FIREBASE_CONFIG = {
   measurementId: "G-JJ2YB7NMH4"
 };
 
-// PIN to unlock the host controls at gatherlyexperiences.com/trivia?host=1
+// PIN to create games / unlock host controls at gatherlyexperiences.com/trivia?host=1
 // Change this to anything you like.
 const HOST_PIN = "1234";

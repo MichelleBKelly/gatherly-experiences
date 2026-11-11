@@ -1,12 +1,11 @@
 // Trivia Night — game logic.
-// Player view: gatherlyexperiences.com/trivia
-// Host view:   gatherlyexperiences.com/trivia?host=1 (asks for the PIN from firebase-config.js)
+// Each game has its own Firestore document, teams, answers, and invite URL.
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getFirestore, doc, collection, getDocs, setDoc, addDoc, updateDoc,
   onSnapshot, query, where, orderBy, serverTimestamp,
-  runTransaction, writeBatch, increment
+  runTransaction, increment
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const QUESTION_SECONDS = 60;
@@ -14,7 +13,7 @@ const MAX_POINTS = 1000; // instant correct answer
 const MIN_POINTS = 500;  // correct answer at the buzzer
 
 const $ = (id) => document.getElementById(id);
-const SCREENS = ["setup", "join", "lobby", "round", "question", "reveal", "leaderboard", "final"];
+const SCREENS = ["home", "host", "loading", "unavailable", "setup", "join", "lobby", "round", "question", "reveal", "leaderboard", "final"];
 const show = (name) => {
   document.body.dataset.screen = name;
   SCREENS.forEach((s) => { $("screen-" + s).hidden = s !== name; });
@@ -84,28 +83,54 @@ if (typeof FIREBASE_CONFIG === "undefined" || String(FIREBASE_CONFIG.apiKey).sta
 const QUESTION_LIST = typeof QUESTIONS === "undefined" ? [] : QUESTIONS;
 
 const db = getFirestore(initializeApp(FIREBASE_CONFIG));
-const gameRef = doc(db, "trivia", "game");
-const teamsCol = collection(gameRef, "teams");
-const answersCol = collection(gameRef, "answers");
+let gameRef = null;
+let teamsCol = null;
+let answersCol = null;
+
+// Reject the old shared "game" document and malformed / nested paths.
+function parseGameId(value) {
+  let id = String(value || "").trim();
+  if (/^https?:\/\//i.test(id)) {
+    try { id = new URL(id).searchParams.get("game") || ""; }
+    catch { return null; }
+  }
+  return /^[a-zA-Z0-9_-]{6,64}$/.test(id) ? id : null;
+}
+
+const params = new URLSearchParams(location.search);
+const requestedGame = params.get("game");
+const gameId = parseGameId(requestedGame);
+const teamStorageKey = gameId ? `trivia.${gameId}.teamId` : null;
+
+function gameUrl(id, host = false) {
+  const url = new URL(location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("game", id);
+  if (host) url.searchParams.set("host", "1");
+  return url.href;
+}
+
+function newGameUrl() {
+  const url = new URL(location.href);
+  url.search = "?host=1";
+  url.hash = "";
+  return url.href;
+}
 
 // ---------- host mode ----------
-const wantsHost = new URLSearchParams(location.search).has("host");
+const wantsHost = params.has("host");
 let hostAuthed = false;
-if (wantsHost) {
-  const pin = prompt("Host PIN:");
-  if (pin === (typeof HOST_PIN === "undefined" ? "1234" : HOST_PIN)) {
-    hostAuthed = true;
-    document.body.classList.add("host");
-  } else if (pin !== null) {
-    alert("Wrong PIN — opening as a player instead.");
-  }
-}
+let hostMode = gameId ? "resume" : "create";
 
 // ---------- state ----------
 let game = null;              // game doc: { state, questionIndex, questionStart, scoredFor }
+let gameLoaded = false;
+let gameProblem = null;
+let connected = false;
 let teams = [];               // live team list, sorted by score desc
 let teamsLoaded = false;
-let myTeamId = localStorage.getItem("trivia.teamId") || null;
+let myTeamId = teamStorageKey ? localStorage.getItem(teamStorageKey) || null : null;
 let myAnswer = null;          // my answer doc for the current question
 let allAnswers = [];          // host only: every answer doc
 let timerHandle = null;
@@ -116,41 +141,76 @@ let questionRenderKey = null;
 const myTeam = () => teams.find((t) => t.id === myTeamId) || null;
 const currentQuestion = () => QUESTION_LIST[game ? game.questionIndex : 0];
 
-// ---------- live listeners ----------
-onSnapshot(gameRef, (snap) => {
-  if (!snap.exists()) {
-    if (hostAuthed) {
-      setDoc(gameRef, { state: "lobby", questionIndex: 0, scoredFor: -1, questionStart: null });
+// ---------- live listeners (only after a specific game is selected) ----------
+function connectGame() {
+  if (!gameId || connected) return;
+  connected = true;
+  gameRef = doc(db, "trivia", gameId);
+  teamsCol = collection(gameRef, "teams");
+  answersCol = collection(gameRef, "answers");
+  $("session-code").textContent = `Game ${gameId}`;
+  $("session-code").hidden = false;
+  $("join-game-code").textContent = `Joining game ${gameId}`;
+  $("share-code").textContent = gameId;
+  $("player-link").value = gameUrl(gameId);
+  $("host-link").value = gameUrl(gameId, true);
+  show("loading");
+  onSnapshot(gameRef, (snap) => {
+    gameLoaded = true;
+    if (!snap.exists()) {
+      game = null;
+      gameProblem = "This game code wasn't found. Check your invite link or ask your host for a new one.";
+    } else {
+      game = snap.data();
+      gameProblem = game.questionSetId !== QUESTION_SET_ID || game.questionCount !== QUESTION_LIST.length
+        ? "This game uses a different set of questions. Refresh the page, or ask your host to create a new holiday game."
+        : !SCREENS.slice(SCREENS.indexOf("lobby")).includes(game.state) || !Number.isInteger(game.questionIndex) || !QUESTION_LIST[game.questionIndex]
+          ? "This game can't be opened. Ask your host to create a new game."
+          : null;
     }
-    game = null;
-  } else {
-    game = snap.data();
-  }
-  render();
-}, (err) => {
-  $("setup-error").textContent = "Firestore error: " + err.message + " — check the rules step in TRIVIA-SETUP.md.";
-  show("setup");
-});
+    render();
+  }, (err) => {
+    gameLoaded = true;
+    gameProblem = "We couldn't connect to this game. Refresh to try again. " + err.message;
+    render();
+  });
 
-onSnapshot(query(teamsCol, orderBy("score", "desc")), (snap) => {
-  teams = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-  teamsLoaded = true;
-  if (myTeamId && !myTeam()) {
-    // Team was removed (game reset) — back to the join screen.
-    localStorage.removeItem("trivia.teamId");
-    myTeamId = null;
+  onSnapshot(query(teamsCol, orderBy("score", "desc")), (snap) => {
+    teams = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    teamsLoaded = true;
+    if (myTeamId && !myTeam()) {
+      // Team was removed (game reset) — back to the join screen.
+      localStorage.removeItem(teamStorageKey);
+      myTeamId = null;
+    }
+    const me = myTeam();
+    $("my-score").hidden = !me;
+    if (me) $("my-score").textContent = `${me.name} · ${me.score} pts`;
+    render();
+  }, (err) => {
+    gameProblem = "We couldn't load the teams. Refresh to try again. " + err.message;
+    render();
+  });
+
+  if (hostAuthed) {
+    onSnapshot(answersCol, (snap) => {
+      allAnswers = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      if (!game || gameProblem) return;
+      if (game.state === "question") updateAnsweredCount();
+      if (game.state === "reveal") renderHostAnswers();
+    }, (err) => {
+      gameProblem = "We couldn't load the answers. Refresh to try again. " + err.message;
+      render();
+    });
   }
-  const me = myTeam();
-  $("my-score").hidden = !me;
-  if (me) $("my-score").textContent = `${me.name} · ${me.score} pts`;
-  render();
-});
+}
 
 function watchMyAnswer() {
   if (!game || !myTeamId) return;
   const key = game.questionIndex + "_" + myTeamId;
   if (key === answerWatchKey) return;
   answerWatchKey = key;
+  myAnswer = null;
   if (unsubMyAnswer) unsubMyAnswer();
   unsubMyAnswer = onSnapshot(doc(answersCol, key), (snap) => {
     myAnswer = snap.exists() ? snap.data() : null;
@@ -158,17 +218,16 @@ function watchMyAnswer() {
   });
 }
 
-if (hostAuthed) {
-  onSnapshot(answersCol, (snap) => {
-    allAnswers = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    if (!game) return;
-    if (game.state === "question") updateAnsweredCount();
-    if (game.state === "reveal") renderHostAnswers();
-  });
-}
-
 // ---------- render ----------
 function render() {
+  $("game-share").hidden = !hostAuthed || !gameLoaded || !!gameProblem;
+  if (gameProblem) {
+    clearInterval(timerHandle);
+    $("unavailable-message").textContent = gameProblem;
+    show("unavailable");
+    return;
+  }
+  if (!gameLoaded || !teamsLoaded) { show("loading"); return; }
   if (game?.state === "lobby") questionRenderKey = null;
   if (!myTeamId && !hostAuthed) { show("join"); return; }
   if (!game) { show("lobby"); renderLobby(); return; }
@@ -189,6 +248,7 @@ function render() {
 
 function renderLobby() {
   applyRoundTheme();
+  $("lobby-description").textContent = hostAuthed ? "Share the player link above, then start when everyone's here." : "Waiting for the host to start the game…";
   $("lobby-count").textContent = teams.length
     ? `${teams.length} team${teams.length === 1 ? "" : "s"} in the game`
     : "No teams yet — share the link!";
@@ -421,6 +481,7 @@ function renderHostAnswers() {
 // ---------- player actions ----------
 $("join-form").addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (!game || !gameLoaded || gameProblem || !teamsLoaded) return;
   const name = $("team-name").value.trim();
   if (!name) return;
   $("join-error").textContent = "";
@@ -428,15 +489,24 @@ $("join-form").addEventListener("submit", async (e) => {
     $("join-error").textContent = "That team name is taken — try another one.";
     return;
   }
-  const ref = await addDoc(teamsCol, {
-    name,
-    nameLower: name.toLowerCase(),
-    score: 0,
-    createdAt: serverTimestamp()
-  });
-  myTeamId = ref.id;
-  localStorage.setItem("trivia.teamId", ref.id);
-  render();
+  const btn = $("join-form").querySelector("button");
+  if (btn.disabled) return;
+  btn.disabled = true;
+  try {
+    const ref = await addDoc(teamsCol, {
+      name,
+      nameLower: name.toLowerCase(),
+      score: 0,
+      createdAt: serverTimestamp()
+    });
+    myTeamId = ref.id;
+    localStorage.setItem(teamStorageKey, ref.id);
+    render();
+  } catch (err) {
+    $("join-error").textContent = "Couldn't join the game. Please try again. " + err.message;
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 async function submitAnswer(value, display) {
@@ -533,15 +603,105 @@ $("btn-next").addEventListener("click", () => {
 });
 
 $("btn-reset").addEventListener("click", async () => {
-  if (!confirm("Clear all teams and scores and go back to the lobby?")) return;
-  for (const col of [teamsCol, answersCol]) {
-    const snap = await getDocs(col);
-    for (let i = 0; i < snap.docs.length; i += 450) {
-      const batch = writeBatch(db);
-      snap.docs.slice(i, i + 450).forEach((d) => batch.delete(d.ref));
-      await batch.commit();
-    }
-  }
-  await updateDoc(gameRef, { state: "lobby", questionIndex: 0, scoredFor: -1, questionStart: null });
-  questionRenderKey = null;
+  location.assign(newGameUrl());
 });
+
+// ---------- create / find games ----------
+function showHostForm(mode) {
+  hostMode = mode;
+  $("host-heading").textContent = mode === "create" ? "Create a new game" : `Host game ${gameId}`;
+  $("host-description").textContent = mode === "create"
+    ? "Get a fresh game code and a link to share with your players."
+    : "Enter your host PIN to return to this game's controls.";
+  $("btn-host-submit").textContent = mode === "create" ? "Create game" : "Open host controls";
+  $("host-error").textContent = "";
+  show("host");
+}
+
+async function createGame() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const bytes = crypto.getRandomValues(new Uint8Array(8));
+    const id = Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join("");
+    const ref = doc(db, "trivia", id);
+    const created = await runTransaction(db, async (tx) => {
+      const existing = await tx.get(ref);
+      if (existing.exists()) return false;
+      tx.set(ref, {
+        state: "lobby", questionIndex: 0, scoredFor: -1, questionStart: null,
+        questionSetId: QUESTION_SET_ID, questionCount: QUESTION_LIST.length,
+        createdAt: serverTimestamp()
+      });
+      return true;
+    });
+    if (created) return id;
+  }
+  throw new Error("Couldn't reserve a new game code. Please try again.");
+}
+
+$("btn-create-home").addEventListener("click", () => showHostForm("create"));
+$("host-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = $("btn-host-submit");
+  if (btn.disabled) return;
+  if ($("host-pin").value !== (typeof HOST_PIN === "undefined" ? "1234" : HOST_PIN)) {
+    $("host-error").textContent = "That PIN isn't correct. Please try again.";
+    return;
+  }
+  $("host-error").textContent = "";
+  btn.disabled = true;
+  try {
+    const id = hostMode === "create" ? await createGame() : gameId;
+    sessionStorage.setItem(`trivia.host.${id}`, "1");
+    if (hostMode === "create") {
+      location.assign(gameUrl(id, true));
+    } else {
+      hostAuthed = true;
+      document.body.classList.add("host");
+      connectGame();
+    }
+  } catch (err) {
+    $("host-error").textContent = "Couldn't open the game. Please try again. " + err.message;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$("game-code-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const raw = $("game-code-input").value.trim();
+  // Generated codes use eight uppercase letters/digits; invite URLs preserve case.
+  const id = parseGameId(/^[a-zA-Z0-9]{8}$/.test(raw) ? raw.toUpperCase() : raw);
+  if (!id) {
+    $("home-error").textContent = "Enter the game code or player link your host shared.";
+    return;
+  }
+  location.assign(gameUrl(id));
+});
+
+$("btn-copy-player").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText($("player-link").value);
+    $("copy-status").textContent = "Player link copied! Share it with your teams.";
+  } catch {
+    $("player-link").select();
+    $("copy-status").textContent = "Select and copy the player link above to share it.";
+  }
+});
+
+$("btn-create-home").disabled = false;
+$("btn-join-code").disabled = false;
+$("boot-status").hidden = true;
+if (requestedGame !== null && !gameId) {
+  $("unavailable-message").textContent = "That game link isn't valid. Ask your host for the player link, or create a new game.";
+  show("unavailable");
+} else if (!gameId) {
+  if (wantsHost) showHostForm("create");
+  else show("home");
+} else if (wantsHost) {
+  if (sessionStorage.getItem(`trivia.host.${gameId}`) === "1") {
+    hostAuthed = true;
+    document.body.classList.add("host");
+    connectGame();
+  } else showHostForm("resume");
+} else connectGame();

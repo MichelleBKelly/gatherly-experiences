@@ -382,6 +382,20 @@ body {
 .survey-board > div { display: flex; justify-content: space-between; gap: 16px; padding: 14px; margin-bottom: 8px; background: #edf3fa; border-radius: 10px; }
 .survey-board strong { white-space: nowrap; color: #203d60; }
 .ha-row select { max-width: 100%; padding: 8px; font: inherit; border-radius: 8px; }
+.session-code { color: #dcecff; font-size: .8rem; white-space: nowrap; }
+.join-divider { margin: 28px 0 0; padding-top: 24px; border-top: 1px solid var(--line); font-weight: 700; }
+#game-code-form .btn, #host-form .btn { width: 100%; margin-top: 14px; }
+input[type="password"] { width: 100%; padding: 14px 18px; font: inherit; border: 1px solid var(--ink); border-radius: 14px; }
+.text-link { color: #a6332c; font-weight: 700; text-underline-offset: 3px; }
+.share-panel { width: 100%; max-width: 900px; margin-bottom: 20px; padding: 20px 24px; background: #f3f7fc; border-radius: 20px; }
+.share-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.share-link-row { display: flex; gap: 12px; }
+.share-link-row input { flex: 1; min-width: 0; font-size: .9rem; }
+.share-link-row .btn { font-size: .95rem; padding: 12px 20px; white-space: nowrap; }
+.share-panel details { margin-top: 16px; }
+.share-panel summary { cursor: pointer; font-size: .9rem; }
+.share-panel details input { margin-top: 10px; font-size: .85rem; }
+.share-panel .fine { margin: 10px 0; }
 @media (max-width: 640px) {
   .top { min-height: 74px; height: auto; flex-wrap: wrap; padding: 14px 18px; gap: 8px 14px; }
   .game-name { font-size: .85rem; }
@@ -393,4 +407,7 @@ body {
   .question-media.image-grid img { height: 150px; }
   .q-count { font-size: .9rem; }
   .q-options form input, .q-options form textarea { min-width: 0; }
+  .share-panel { padding: 18px; }
+  .share-link-row { flex-direction: column; }
+  .session-code { order: 3; width: 100%; }
 }

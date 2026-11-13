@@ -13,7 +13,7 @@ const MAX_POINTS = 1000; // instant correct answer
 const MIN_POINTS = 500;  // correct answer at the buzzer
 
 const $ = (id) => document.getElementById(id);
-const SCREENS = ["home", "host", "loading", "unavailable", "setup", "join", "lobby", "round", "question", "reveal", "leaderboard", "final"];
+const SCREENS = ["home", "host", "loading", "unavailable", "setup", "join", "lobby", "round", "question", "waiting", "reveal", "leaderboard", "final"];
 const show = (name) => {
   document.body.dataset.screen = name;
   SCREENS.forEach((s) => { $("screen-" + s).hidden = s !== name; });
@@ -137,6 +137,8 @@ let timerHandle = null;
 let answerWatchKey = null;
 let unsubMyAnswer = null;
 let questionRenderKey = null;
+let selectedAnswer = null;
+let submittingAnswer = false;
 
 const myTeam = () => teams.find((t) => t.id === myTeamId) || null;
 const currentQuestion = () => QUESTION_LIST[game ? game.questionIndex : 0];
@@ -213,7 +215,9 @@ function watchMyAnswer() {
   myAnswer = null;
   if (unsubMyAnswer) unsubMyAnswer();
   unsubMyAnswer = onSnapshot(doc(answersCol, key), (snap) => {
+    if (key !== answerWatchKey) return;
     myAnswer = snap.exists() ? snap.data() : null;
+    if (game && game.state === "question" && !submittingAnswer) render();
     if (game && game.state === "reveal") renderReveal();
   });
 }
@@ -239,7 +243,13 @@ function render() {
   switch (game.state) {
     case "lobby": show("lobby"); renderLobby(); break;
     case "round": show("round"); renderRound(); break;
-    case "question": show("question"); renderQuestion(); break;
+    case "question":
+      if (!hostAuthed && myAnswer?.qIndex === game.questionIndex) {
+        clearInterval(timerHandle);
+        applyRoundTheme();
+        show("waiting");
+      } else { show("question"); renderQuestion(); }
+      break;
     case "reveal": show("reveal"); renderReveal(); break;
     case "leaderboard": show("leaderboard"); applyRoundTheme(); renderBoard($("lb-list")); break;
     case "final": show("final"); renderFinal(); break;
@@ -271,6 +281,9 @@ function renderQuestion() {
   // (e.g. the server timestamp confirming) doesn't wipe a player's selection.
   if (questionRenderKey === game.questionIndex && !$("screen-question").hidden) return;
   questionRenderKey = game.questionIndex;
+  selectedAnswer = null;
+  $("btn-submit-answer").hidden = hostAuthed || !myTeamId;
+  $("btn-submit-answer").disabled = true;
   applyRoundTheme();
   $("q-count").textContent = `Question ${game.questionIndex + 1} of ${QUESTION_LIST.length}`;
   $("q-round").textContent = `Round ${q.round} · ${HOLIDAY_ROUNDS[q.round - 1].title}`;
@@ -292,19 +305,27 @@ function renderQuestion() {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "opt";
+      btn.disabled = hostAuthed || !myTeamId;
+      btn.setAttribute("aria-pressed", "false");
       const letter = document.createElement("span");
       letter.className = "letter";
       letter.textContent = "ABCD"[i] || String(i + 1);
       btn.append(letter, document.createTextNode(opt));
       btn.addEventListener("click", () => {
-        box.querySelectorAll(".opt").forEach((b) => b.classList.remove("picked"));
+        box.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("picked");
+          b.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("picked");
-        submitAnswer(i, opt);
+        btn.setAttribute("aria-pressed", "true");
+        selectedAnswer = { value: i, display: opt };
+        $("btn-submit-answer").disabled = false;
       });
       box.append(btn);
     });
   } else {
     const form = document.createElement("form");
+    $("btn-submit-answer").hidden = true;
     const input = document.createElement(q.manualReview ? "textarea" : "input");
     if (!q.manualReview) input.type = "text";
     input.maxLength = q.manualReview ? 1200 : 160;
@@ -314,11 +335,12 @@ function renderQuestion() {
     const btn = document.createElement("button");
     btn.type = "submit";
     btn.className = "btn";
-    btn.textContent = "Lock it in";
+    btn.textContent = "Submit";
+    input.disabled = btn.disabled = hostAuthed || !myTeamId;
     form.append(input, btn);
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      submitAnswer(input.value.trim(), input.value.trim());
+      if (input.value.trim()) return submitAnswer(input.value.trim(), input.value.trim());
     });
     box.append(form);
   }
@@ -510,7 +532,7 @@ $("join-form").addEventListener("submit", async (e) => {
 });
 
 async function submitAnswer(value, display) {
-  if (!myTeamId || !game || game.state !== "question") return;
+  if (!myTeamId || hostAuthed || !game || game.state !== "question" || submittingAnswer || myAnswer?.qIndex === game.questionIndex || !String(display).trim()) return;
   const startMs = game.questionStart ? game.questionStart.toMillis() : Date.now();
   const timeMs = Date.now() - startMs;
   if (timeMs >= QUESTION_SECONDS * 1000) return;
@@ -518,8 +540,9 @@ async function submitAnswer(value, display) {
   const correct = q.type === "choice"
     ? value === q.answer
     : q.answer.some((a) => norm(a) === norm(value));
-  await setDoc(doc(answersCol, game.questionIndex + "_" + myTeamId), {
-    qIndex: game.questionIndex,
+  const qIndex = game.questionIndex;
+  const answer = {
+    qIndex,
     teamId: myTeamId,
     teamName: (myTeam() || {}).name || "",
     answer: display,
@@ -527,9 +550,29 @@ async function submitAnswer(value, display) {
     awardedPoints: null,
     timeMs,
     submittedAt: serverTimestamp()
-  });
-  $("q-status").textContent = "Answer locked in! You can change it until time runs out.";
+  };
+  submittingAnswer = true;
+  const controls = $("q-options").querySelectorAll("button, input, textarea");
+  controls.forEach((control) => { control.disabled = true; });
+  $("btn-submit-answer").disabled = true;
+  $("q-status").textContent = "Submitting your answer…";
+  try {
+    await setDoc(doc(answersCol, qIndex + "_" + myTeamId), answer);
+    if (game.questionIndex === qIndex) { myAnswer = answer; render(); }
+  } catch (err) {
+    if (game.questionIndex === qIndex && game.state === "question") {
+      myAnswer = null;
+      show("question");
+      controls.forEach((control) => { control.disabled = false; });
+      $("btn-submit-answer").disabled = !selectedAnswer;
+      $("q-status").textContent = "Couldn't submit your answer. Please try again.";
+    }
+  } finally { submittingAnswer = false; }
 }
+
+$("btn-submit-answer").addEventListener("click", () => {
+  if (selectedAnswer) return submitAnswer(selectedAnswer.value, selectedAnswer.display);
+});
 
 // ---------- host actions ----------
 $("btn-start").addEventListener("click", () => {

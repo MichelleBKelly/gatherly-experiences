@@ -67,7 +67,10 @@ function fixture(options = {}) {
     query: (collection, filter) => ({ isQuery: true, collection, filter }),
     where: (field, op, value) => ({ field, value }),
     getDocs: async query => ({ docs: answerDocs.filter(d => d.data().qIndex === query.filter?.value) }),
-    setDoc: async (ref, data) => { calls.push({ method: 'set', ref, data }); },
+    setDoc: async (ref, data) => {
+      if (options.answerError) throw new Error('Connection failed');
+      calls.push({ method: 'set', ref, data });
+    },
     updateDoc: async (ref, data) => { calls.push({ method: 'update', ref, data }); },
     addDoc: async () => ({ id: 'team1' }),
     serverTimestamp: () => ({ timestamp: true }), increment: value => ({ increment: value }),
@@ -168,7 +171,7 @@ test('host pauses at round boundaries and finishes after the final question', as
 test('submissions and leaderboard use the same survey score; transaction reads documents', async () => {
   const f = fixture();
   f.setQuestion(23);
-  f.run('myTeamId = "team1"; teams = [{ id: "team1", name: "Snow Team", score: 0 }];');
+  f.run('hostAuthed = false; myTeamId = "team1"; teams = [{ id: "team1", name: "Snow Team", score: 0 }];');
   await f.run('submitAnswer("travel", "travel")');
   const submitted = f.calls.at(-1);
   assert.equal(submitted.data.correct, true);
@@ -177,6 +180,46 @@ test('submissions and leaderboard use the same survey score; transaction reads d
   assert.ok(f.calls.some(c => c.data.points === 25));
   assert.ok(f.calls.some(c => c.data.score?.increment === 25));
   assert.equal(f.calls.at(-1).data.state, 'leaderboard');
+});
+
+test('choice selection waits for Submit, locks once, and follows the host out of waiting', async () => {
+  const f = fixture({ search: '?game=ROOM0001', storage: { 'trivia.ROOM0001.teamId': 'team1' } });
+  f.run('teams = [{ id: "team1", name: "Snow Team", score: 0 }];');
+  f.setQuestion(0);
+  const choices = f.elements.get('q-options').children;
+  choices[0].listeners.click();
+  assert.equal(f.calls.length, 0);
+  assert.equal(f.elements.get('btn-submit-answer').disabled, false);
+  choices[1].listeners.click();
+  await f.elements.get('btn-submit-answer').listeners.click();
+  assert.equal(f.calls.length, 1);
+  assert.equal(f.calls[0].data.answer, 'Germany');
+  assert.equal(f.run('document.body.dataset.screen'), 'waiting');
+  f.run('render()');
+  assert.equal(f.run('document.body.dataset.screen'), 'waiting');
+  await f.run('submitAnswer(0, "France")');
+  assert.equal(f.calls.length, 1);
+  f.run('game.state = "reveal"; render()');
+  assert.equal(f.run('document.body.dataset.screen'), 'reveal');
+  f.setQuestion(1);
+  assert.equal(f.run('document.body.dataset.screen'), 'question');
+  assert.equal(f.elements.get('btn-submit-answer').disabled, true);
+});
+
+test('typed answers submit to waiting and failed saves allow retry', async () => {
+  for (const answerError of [false, true]) {
+    const f = fixture({ search: '?game=ROOM0001', storage: { 'trivia.ROOM0001.teamId': 'team1' }, answerError });
+    f.run('teams = [{ id: "team1", name: "Snow Team", score: 0 }];');
+    f.setQuestion(10);
+    const form = f.elements.get('q-options').children[0];
+    form.children[0].value = 'Winter Wonderland';
+    await form.listeners.submit({ preventDefault() {} });
+    assert.equal(f.run('document.body.dataset.screen'), answerError ? 'question' : 'waiting');
+    if (answerError) {
+      assert.match(f.elements.get('q-status').textContent, /try again/);
+      assert.equal(f.run('submittingAnswer'), false);
+    }
+  }
 });
 
 test('manual review blocks ungraded differences and accepts explicit zero points', async () => {

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="trivia.css?v=holiday-rooms-2">
+  <link rel="stylesheet" href="trivia.css?v=holiday-tv-3">
 </head>
 <body>
 
@@ -124,12 +124,12 @@
         <p class="kicker" id="round-number"></p>
         <h1 id="round-title"></h1>
         <p id="round-description"></p>
+        <p class="fine">Your host will start the round when everyone is ready.</p>
+        <div class="host-only"><div class="host-panel">
+          <button class="btn" id="btn-round-start" type="button">Start this round</button>
+        </div></div>
       </div>
     </div>
-    <p class="fine">Your host will start the round when everyone is ready.</p>
-    <div class="host-only"><div class="host-panel">
-      <button class="btn" id="btn-round-start" type="button">Start this round</button>
-    </div></div>
   </section>
 
   <!-- Question + countdown -->
@@ -153,6 +153,7 @@
       <p id="q-host-note"></p>
     </details>
     <div class="q-options needs-time" id="q-options"></div>
+    <button class="btn needs-time" id="btn-submit-answer" type="button" disabled>Submit</button>
     <p class="q-status" id="q-status"></p>
     <div class="host-only">
       <div class="host-panel">
@@ -161,6 +162,12 @@
         <button class="btn" id="btn-reveal" type="button">Reveal answer</button>
       </div>
     </div>
+  </section>
+
+  <section class="screen" id="screen-waiting" hidden aria-live="polite">
+    <p class="kicker">Answer submitted</p>
+    <h1>You're locked in!</h1>
+    <p class="lead">Waiting for the host to reveal the answer.</p>
   </section>
 
   <!-- Answer reveal -->
@@ -215,6 +222,6 @@
 
 <script src="firebase-config.js"></script>
 <script src="questions.js?v=holiday-rooms-2"></script>
-<script type="module" src="trivia.js?v=holiday-rooms-2"></script>
+<script type="module" src="trivia.js?v=holiday-tv-3"></script>
 </body>
 </html>

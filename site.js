@@ -2,7 +2,7 @@
 // Ported from the Figma Make React app (src/App.tsx): same routes, same data.
 
 const ARROW = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5"/></svg>';
-const CONTACT_EMAIL = 'hello@gatherlyexperiences.com';
+const CONTACT_EMAIL = 'info@gatherlyexperiences.com';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -17,22 +17,14 @@ const categories = [
   ['07', 'Competition & Challenges', 'Encouraging friendly competition through group challenges, team competitions and interactive activities.', 'competition-challenges', [['Minute to Win It', 'Complete silly and challenging tasks in 60 seconds.'], ['The Ultimate Trivia Tournament', 'Multiple trivia rounds with a leaderboard and final winner.'], ['The Mystery Box Challenge', 'Solve clues and puzzles to uncover what is inside.'], ['The Rapid-Fire Challenge', 'Answer as many questions as possible before time runs out.'], ['The Ultimate Championship', 'Different games where players earn points throughout the competition.']]],
 ];
 
-const gameImages = [
-  'https://images.unsplash.com/photo-1651889523218-ee0aadc12003?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700',
-  'https://images.unsplash.com/photo-1578170222004-0e4105037085?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700',
-  'https://images.unsplash.com/photo-1551401107-68df4db82067?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700',
-  'https://images.unsplash.com/photo-1764093457612-299b6638cd1e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700',
-  'https://images.unsplash.com/photo-1772724317813-c7aec42c9d26?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700',
-];
-
 const categoryImages = {
   'team-building': 'assets/gatherly/team-building.jpg',
   'holiday-celebrations': 'assets/gatherly/holidays.jpg',
   'special-occasions': 'assets/gatherly/celebrations.jpg',
   'social-game-nights': 'assets/gatherly/social-games.jpg',
-  'wellness-connection': 'assets/gatherly/wellness.jpg',
+  'wellness-connection': 'assets/gatherly/competition.jpg',
   'creative-experiences': 'assets/gatherly/creative.jpg',
-  'competition-challenges': 'assets/gatherly/competition.jpg',
+  'competition-challenges': 'assets/gatherly/wellness.jpg',
 };
 
 // ---------- static list rendering ----------
@@ -57,17 +49,20 @@ function renderCategory(slug) {
   document.getElementById('category-kicker').textContent = category[0] + ' — EXPERIENCE CATEGORY';
   document.getElementById('category-title').textContent = category[1];
   document.getElementById('category-copy').textContent = category[2];
-  document.getElementById('game-option-grid').innerHTML = category[4].map(([game, description], index) => `
+  const isHoliday = category[3] === 'holiday-celebrations';
+  document.getElementById('category-games').hidden = !isHoliday;
+  document.getElementById('experiences-soon').hidden = isHoliday;
+  document.getElementById('game-option-grid').innerHTML = isHoliday ? `
     <article>
-      <img src="${gameImages[index]}" alt="" loading="lazy">
-      <span>0${index + 1}</span>
+      <img src="assets/gatherly/holiday-showdown.jpg" alt="Friends celebrating together during the Holiday Showdown" loading="lazy">
+      <span>01</span>
       <div class="game-card-copy">
-        <small>${index % 2 ? 'Self-hosted' : 'Expertly hosted'}</small>
-        <h3>${esc(game)}</h3>
-        <p>${esc(description)}</p>
+        <small>Expertly hosted</small>
+        <h3>Holiday Showdown</h3>
+        <p>A festive virtual competition filled with holiday trivia, challenges, laughter, and seasonal surprises.</p>
       </div>
       <a href="mailto:${CONTACT_EMAIL}">Learn more ${ARROW}</a>
-    </article>`).join('');
+    </article>` : '';
 }
 
 // ---------- hash router ----------

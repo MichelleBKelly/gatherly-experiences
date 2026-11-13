@@ -26,7 +26,7 @@ button { font: inherit; }
 svg { width: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Hash-routed pages (site.js toggles these) */
-.page[hidden] { display: none; }
+[hidden] { display: none !important; }
 
 /* Skip link */
 .skip {
@@ -109,8 +109,8 @@ svg { width: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-l
 .hero-inner .hero-description { max-width: 760px; margin: 0; font-size: 18px; font-weight: 400; line-height: 1.65; letter-spacing: 0; }
 .hero h1 {
   margin-bottom: 34px;
-  max-width: 900px;
-  font: 700 clamp(52px, 6.5vw, 94px)/.98 'Manrope';
+  max-width: 1200px;
+  font: 700 clamp(52px, 6vw, 90px)/1.08 'Manrope';
   letter-spacing: -5px;
 }
 .hero-inner > a { width: max-content; min-width: 145px; background: white; color: var(--red); }
@@ -242,6 +242,12 @@ footer { padding: 36px 6vw; display: grid; grid-template-columns: 1fr 1fr auto; 
 .game-option-grid article > span { align-self: start; padding-top: 8px; font-size: 10px; font-weight: 700; color: var(--red); }
 .game-option-grid small { text-transform: uppercase; letter-spacing: 1.2px; font-size: 8px; }.game-option-grid h3 { margin: 8px 0; font: 700 27px 'Manrope'; letter-spacing: -1.5px; }
 .game-option-grid p { max-width: 570px; margin: 0; opacity: .72; font-size: 13px; line-height: 1.55; }.game-option-grid a { display: inline-flex; align-items: center; gap: 8px; width: max-content; padding-bottom: 4px; border-bottom: 1px solid currentColor; font-size: 11px; font-weight: 700; }
+
+.experiences-soon { min-height: 520px; padding: 110px 8vw; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; background: var(--ivory); }
+.experiences-soon > p:first-child { color: var(--red); font-size: 9px; font-weight: 700; letter-spacing: 2px; }
+.experiences-soon h2 { margin: 20px 0 25px; font: 700 clamp(52px, 7vw, 96px)/.92 'Manrope'; letter-spacing: -6px; }
+.experiences-soon > p:nth-child(3) { max-width: 620px; color: #6b625c; font-size: 16px; line-height: 1.65; }
+.experiences-soon a { display: inline-flex; align-items: center; gap: 9px; margin-top: 15px; padding-bottom: 5px; border-bottom: 1px solid var(--ink); font-size: 12px; font-weight: 700; }
 
 .about-hero {
   min-height: 620px;

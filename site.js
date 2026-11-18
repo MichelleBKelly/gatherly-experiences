@@ -60,7 +60,7 @@ function renderCategory(slug) {
         <small>Expertly hosted</small>
         <h3>Holiday Showdown</h3>
         <p>A festive virtual competition filled with holiday trivia, challenges, laughter, and seasonal surprises.</p>
-        <p class="game-card-price">$20 CAD per person</p>
+        <p class="game-card-price">$25 CAD per person</p>
         <a class="game-card-demo" href="assets/gatherly/winter_demo_gatherly.mp4">Watch the demo ${ARROW}</a>
       </div>
       <a href="mailto:${CONTACT_EMAIL}">Learn more ${ARROW}</a>

@@ -60,6 +60,7 @@ function renderCategory(slug) {
         <small>Expertly hosted</small>
         <h3>Holiday Showdown</h3>
         <p>A festive virtual competition filled with holiday trivia, challenges, laughter, and seasonal surprises.</p>
+        <p class="game-card-price">$20 CAD per person</p>
       </div>
       <a href="mailto:${CONTACT_EMAIL}">Learn more ${ARROW}</a>
     </article>` : '';
@@ -83,6 +84,9 @@ function updatePage() {
   const page = getPage(hash);
   PAGES.forEach((p) => { document.getElementById('page-' + p).hidden = p !== page; });
   if (page === 'category') renderCategory(hash.split('#/category/')[1] || '');
+  if (page !== 'category' || document.getElementById('category-games').hidden) {
+    document.getElementById('holiday-demo-video').pause();
+  }
   nav.classList.remove('open');
   menuToggle.setAttribute('aria-expanded', 'false');
   if (hash.startsWith('#/')) {
